@@ -10,7 +10,7 @@ public class AddComplaint {
         frame.setLocationRelativeTo(null);
         frame.setLayout(null);
 
-        // Background Gradient Panel
+        // Gradient Panel
         JPanel panel = new JPanel() {
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
@@ -23,6 +23,7 @@ public class AddComplaint {
             }
         };
         panel.setLayout(null);
+        panel.setBounds(0, 0, 600, 450);   // ⭐ IMPORTANT FIX
 
         // Card Panel
         JPanel card = new JPanel();
@@ -36,19 +37,21 @@ public class AddComplaint {
         title.setFont(new Font("Segoe UI", Font.BOLD, 18));
         title.setBounds(80, 20, 200, 30);
 
-        // Fields
+        // Name
         JLabel nameLabel = new JLabel("Name");
         nameLabel.setBounds(30, 70, 100, 20);
 
         JTextField nameField = new JTextField();
         nameField.setBounds(30, 90, 240, 30);
 
+        // Issue
         JLabel issueLabel = new JLabel("Issue");
         issueLabel.setBounds(30, 130, 100, 20);
 
         JTextField issueField = new JTextField();
         issueField.setBounds(30, 150, 240, 30);
 
+        // Location
         JLabel locationLabel = new JLabel("Location");
         locationLabel.setBounds(30, 190, 100, 20);
 
@@ -63,7 +66,19 @@ public class AddComplaint {
         submitBtn.setFocusPainted(false);
         submitBtn.setFont(new Font("Segoe UI", Font.BOLD, 13));
 
-        // Add all to card
+        // 👉 TEMP ACTION (for testing)
+        submitBtn.addActionListener(e -> {
+            String name = nameField.getText();
+            String issue = issueField.getText();
+            String location = locationField.getText();
+
+            JOptionPane.showMessageDialog(frame,
+                    "Complaint Submitted!\nName: " + name +
+                    "\nIssue: " + issue +
+                    "\nLocation: " + location);
+        });
+
+        // Add everything to card
         card.add(title);
         card.add(nameLabel);
         card.add(nameField);
@@ -73,7 +88,10 @@ public class AddComplaint {
         card.add(locationField);
         card.add(submitBtn);
 
+        // Add to panel
         panel.add(card);
+
+        // ⭐ IMPORTANT LINE (was missing earlier)
         frame.add(panel);
 
         frame.setVisible(true);

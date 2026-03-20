@@ -23,7 +23,7 @@ public class AddComplaint {
             }
         };
         panel.setLayout(null);
-        panel.setBounds(0, 0, 600, 450);   // ⭐ IMPORTANT FIX
+        panel.setBounds(0, 0, 600, 450);   
 
         // Card Panel
         JPanel card = new JPanel();
@@ -91,7 +91,7 @@ public class AddComplaint {
         // Add to panel
         panel.add(card);
 
-        // ⭐ IMPORTANT LINE (was missing earlier)
+        // IMPORTANT LINE (was missing earlier)
         frame.add(panel);
 
         frame.setVisible(true);

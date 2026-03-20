@@ -39,7 +39,7 @@ public class MainGUI {
         subtitle.setFont(new Font("Segoe UI", Font.PLAIN, 12));
         subtitle.setBounds(95, 45, 200, 20);
 
-        // Buttons (modern style)
+        // Buttons
         JButton addBtn = new JButton("Add Complaint");
         addBtn.setBounds(50, 90, 200, 35);
         addBtn.setBackground(new Color(0, 123, 255));

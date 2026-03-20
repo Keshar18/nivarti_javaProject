@@ -41,6 +41,10 @@ public class MainGUI {
         viewBtn.setFocusPainted(false);
         viewBtn.setFont(new Font("Arial", Font.BOLD, 14));
 
+        addBtn.addActionListener(e -> {
+    new AddComplaint();
+});
+
         panel.add(addBtn);
         panel.add(viewBtn);
 

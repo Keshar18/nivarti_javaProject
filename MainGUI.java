@@ -9,7 +9,7 @@ public class MainGUI {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
 
-        // Main Panel (Gradient feel)
+        // Main Panel 
         JPanel panel = new JPanel() {
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
@@ -23,7 +23,7 @@ public class MainGUI {
         };
         panel.setLayout(null);
 
-        // Card Panel (center white box)
+        // Card Panel
         JPanel card = new JPanel();
         card.setLayout(null);
         card.setBounds(150, 80, 300, 250);
@@ -57,7 +57,7 @@ public class MainGUI {
         // Action
         addBtn.addActionListener(e -> new AddComplaint());
 
-        // Add elements
+        // Added elements
         card.add(title);
         card.add(subtitle);
         card.add(addBtn);

@@ -1,6 +1,6 @@
 import java.awt.*;
+import java.sql.*;
 import javax.swing.*;
-
 public class AddComplaint {
 
     public AddComplaint() {
@@ -66,17 +66,30 @@ public class AddComplaint {
         submitBtn.setFocusPainted(false);
         submitBtn.setFont(new Font("Segoe UI", Font.BOLD, 13));
 
-        // 👉 TEMP ACTION (for testing)
+        //  TEMP ACTION (for testing)
         submitBtn.addActionListener(e -> {
-            String name = nameField.getText();
-            String issue = issueField.getText();
-            String location = locationField.getText();
+    try {
+        String name = nameField.getText();
+        String issue = issueField.getText();
+        String location = locationField.getText();
 
-            JOptionPane.showMessageDialog(frame,
-                    "Complaint Submitted!\nName: " + name +
-                    "\nIssue: " + issue +
-                    "\nLocation: " + location);
-        });
+        Connection con = DBConnection.getConnection();
+
+        String query = "INSERT INTO complaints(name, issue, location) VALUES (?, ?, ?)";
+        PreparedStatement ps = con.prepareStatement(query);
+
+        ps.setString(1, name);
+        ps.setString(2, issue);
+        ps.setString(3, location);
+
+        ps.executeUpdate();
+
+        JOptionPane.showMessageDialog(frame, "Complaint Saved Successfully!");
+
+    } catch (Exception ex) {
+        ex.printStackTrace();
+    }
+});
 
         // Add everything to card
         card.add(title);

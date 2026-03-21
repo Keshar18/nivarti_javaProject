@@ -1,18 +1,22 @@
+import java.io.FileInputStream;
 import java.sql.*;
+import java.util.Properties;
 
 public class DBConnection {
 
     public static Connection getConnection() {
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");  
+            Properties props = new Properties();
+            FileInputStream fis = new FileInputStream("config.properties");
+            props.load(fis);
 
-            Connection con = DriverManager.getConnection(
-                "jdbc:mysql://localhost:3306/nivarti",
-                "root",
-                "root"   // password 
-            );
+            String url = props.getProperty("db.url");
+            String user = props.getProperty("db.user");
+            String password = props.getProperty("db.password");
 
-            return con;
+            Class.forName("com.mysql.cj.jdbc.Driver");
+
+            return DriverManager.getConnection(url, user, password);
 
         } catch (Exception e) {
             e.printStackTrace();

@@ -35,6 +35,8 @@ public class ViewComplaints extends JFrame {
             Statement st = con.createStatement();
             ResultSet rs = st.executeQuery(query);
 
+            model.setRowCount(0); // ✅ clear old data
+
             while (rs.next()) {
                 int id = rs.getInt("id");
                 String name = rs.getString("name");
@@ -47,7 +49,6 @@ public class ViewComplaints extends JFrame {
 
         } catch (Exception e) {
             e.printStackTrace();
-            //lellele
         }
     }
 }

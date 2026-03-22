@@ -47,6 +47,7 @@ public class ViewComplaints extends JFrame {
 
         } catch (Exception e) {
             e.printStackTrace();
+            //lellele
         }
     }
 }

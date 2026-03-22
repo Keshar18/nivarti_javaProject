@@ -78,7 +78,7 @@ public class AddComplaint {
         
         
 
-        String query = "INSERT INTO complaints(name, issue, location) VALUES (?, ?, ?)";
+        String query = "INSERT INTO complaints(name, issue, location, status) VALUES (?, ?, ?, ?)";
 
         Connection con = DBConnection.getConnection();
         PreparedStatement ps = con.prepareStatement(query);
@@ -87,6 +87,7 @@ public class AddComplaint {
         ps.setString(1, name);
         ps.setString(2, issue);
         ps.setString(3, location);
+        ps.setString(4, "Pending");
 
         ps.executeUpdate();
 
@@ -114,5 +115,9 @@ public class AddComplaint {
         frame.add(panel);
 
         frame.setVisible(true);
+     // test change 123
+     
+       
+        
     }
 }

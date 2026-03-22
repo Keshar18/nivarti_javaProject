@@ -14,7 +14,7 @@ public class ViewComplaints extends JFrame {
         setLocationRelativeTo(null);
 
         // Table columns
-        String[] columns = {"ID", "Name", "Issue", "Location"};
+        String[] columns = {"ID", "Name", "Issue", "Location", "Status"};
 
         model = new DefaultTableModel(columns, 0);
         table = new JTable(model);
@@ -40,8 +40,9 @@ public class ViewComplaints extends JFrame {
                 String name = rs.getString("name");
                 String issue = rs.getString("issue");
                 String location = rs.getString("location");
+                String status = rs.getString("status");
 
-                model.addRow(new Object[]{id, name, issue, location});
+                model.addRow(new Object[]{id, name, issue, location, status});
             }
 
         } catch (Exception e) {

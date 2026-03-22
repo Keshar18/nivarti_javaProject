@@ -61,6 +61,8 @@ public class MainGUI {
         addBtn.addActionListener(e -> {
             new AddComplaint();
         });
+        
+        adminBtn.addActionListener(e -> new UpdateStatus());
 
         // Added elements
         card.add(title);

@@ -17,12 +17,12 @@ public class AddComplaint {
 
         JPanel panel = new JPanel();
         panel.setLayout(null);
-        panel.setBackground(new Color(40, 167, 69));
+        panel.setBackground(Color.WHITE);
 
         JLabel title = new JLabel("Add Complaint");
         title.setBounds(120, 20, 200, 30);
         title.setFont(new Font("Segoe UI", Font.BOLD, 20));
-        title.setForeground(Color.WHITE);
+        title.setForeground(Color.BLACK);
 
         JLabel nameLabel = new JLabel("Name:");
         nameLabel.setBounds(50, 80, 100, 25);
@@ -44,6 +44,8 @@ public class AddComplaint {
 
         JButton submitBtn = new JButton("Submit");
         submitBtn.setBounds(130, 220, 120, 35);
+        submitBtn.setBackground(new Color(0, 123, 255));
+        submitBtn.setForeground(Color.WHITE);
 
         //  ACTION BUTTON
         submitBtn.addActionListener(e -> {

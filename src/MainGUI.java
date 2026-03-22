@@ -53,6 +53,9 @@ public class MainGUI {
         viewBtn.setForeground(Color.WHITE);
         viewBtn.setFocusPainted(false);
         viewBtn.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        
+        JButton adminBtn = new JButton("Admin Panel"); // added button for status
+        card.add(adminBtn);
 
         // Action
         addBtn.addActionListener(e -> {

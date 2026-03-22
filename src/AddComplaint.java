@@ -17,12 +17,12 @@ public class AddComplaint {
 
         JPanel panel = new JPanel();
         panel.setLayout(null);
-        panel.setBackground(Color.WHITE);
+        panel.setBackground(new Color(40, 167, 69)); // ✅ SAME GREEN
 
         JLabel title = new JLabel("Add Complaint");
-        title.setBounds(120, 20, 200, 30);
+        title.setBounds(110, 20, 200, 30);
         title.setFont(new Font("Segoe UI", Font.BOLD, 20));
-        title.setForeground(Color.BLACK);
+        title.setForeground(Color.WHITE);
 
         JLabel nameLabel = new JLabel("Name:");
         nameLabel.setBounds(50, 80, 100, 25);
@@ -44,10 +44,8 @@ public class AddComplaint {
 
         JButton submitBtn = new JButton("Submit");
         submitBtn.setBounds(130, 220, 120, 35);
-        submitBtn.setBackground(new Color(0, 123, 255));
-        submitBtn.setForeground(Color.WHITE);
 
-        //  ACTION BUTTON
+        // 🔥 BUTTON FIXED
         submitBtn.addActionListener(e -> {
             try {
                 String name = nameField.getText();
@@ -73,17 +71,16 @@ public class AddComplaint {
                 issueField.setText("");
                 locationField.setText("");
 
-                // close current window
                 frame.dispose();
 
-                // open view page
-                new ViewComplaints();
+                new ViewComplaints(); // open next page
 
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
         });
 
+        // ADD COMPONENTS
         panel.add(title);
         panel.add(nameLabel);
         panel.add(nameField);
@@ -91,9 +88,9 @@ public class AddComplaint {
         panel.add(issueField);
         panel.add(locationLabel);
         panel.add(locationField);
-        panel.add(submitBtn);
+        panel.add(submitBtn); // ✅ IMPORTANT
 
         frame.add(panel);
-        frame.setVisible(true);
+        frame.setVisible(true); // ✅ IMPORTANT
     }
 }

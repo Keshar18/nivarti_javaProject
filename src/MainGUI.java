@@ -58,10 +58,9 @@ public class MainGUI {
         card.add(adminBtn);
 
         // Action
-        addBtn.addActionListener(e -> {
-            new AddComplaint();
+        viewBtn.addActionListener(e -> {
+            new ViewComplaints().setVisible(true);
         });
-        
         adminBtn.addActionListener(e -> new UpdateStatus());
 
         // Added elements

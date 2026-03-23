@@ -1,91 +1,138 @@
-import java.awt.*;
 import javax.swing.*;
+import java.awt.*;
 
 public class MainGUI {
+
     public static void main(String[] args) {
 
         JFrame frame = new JFrame("Nivarti");
-        frame.setSize(600, 450);
+        frame.setSize(900, 600);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
 
-        // Main Panel 
-        JPanel panel = new JPanel() {
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                Graphics2D g2d = (Graphics2D) g;
-                Color c1 = new Color(58, 123, 213);
-                Color c2 = new Color(0, 210, 255);
-                GradientPaint gp = new GradientPaint(0, 0, c1, 0, getHeight(), c2);
-                g2d.setPaint(gp);
-                g2d.fillRect(0, 0, getWidth(), getHeight());
-            }
-        };
-        panel.setLayout(new GridBagLayout());
+        // MAIN PANEL
+        JPanel mainPanel = new JPanel(new BorderLayout());
 
-        // Card Panel
-        JPanel card = new JPanel();
-        card.setLayout(null);
-        card.setPreferredSize(new Dimension(320, 260));
-        card.setBackground(Color.WHITE);
-        card.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200)));
+        // ================= NAVBAR =================
+        JPanel navbar = new JPanel(new BorderLayout());
+        navbar.setBackground(new Color(0, 150, 200));
+        navbar.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
 
-        // Title
-        JLabel title = new JLabel("Nivarti");
-        title.setFont(new Font("Segoe UI", Font.BOLD, 24));
-        title.setBounds(100, 20, 150, 30);
+        JLabel logo = new JLabel("NIVARTI");
+        logo.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        logo.setForeground(Color.WHITE);
 
-        JLabel subtitle = new JLabel("Smart Civic System");
-        subtitle.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        subtitle.setBounds(95, 45, 200, 20);
+        JPanel navButtons = new JPanel();
+        navButtons.setOpaque(false);
 
-     // Buttons
-        JButton addBtn = new JButton("Add Complaint");
-        addBtn.setBounds(50, 90, 200, 35);
-        addBtn.setBackground(new Color(0, 123, 255));
-        addBtn.setForeground(Color.WHITE);
-        addBtn.setFocusPainted(false);
-        addBtn.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        JButton loginBtn = new JButton("Login");
+        JButton adminBtn = new JButton("Admin");
 
-        JButton viewBtn = new JButton("View Complaints");
-        viewBtn.setBounds(50, 140, 200, 35);
-        viewBtn.setBackground(new Color(40, 167, 69));
-        viewBtn.setForeground(Color.WHITE);
-        viewBtn.setFocusPainted(false);
-        viewBtn.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        navButtons.add(loginBtn);
+        navButtons.add(adminBtn);
 
-        JButton adminBtn = new JButton("Admin Panel");
-        adminBtn.setBounds(50, 190, 200, 35); 
-        adminBtn.setBackground(new Color(255, 193, 7));
-        adminBtn.setForeground(Color.BLACK);
-        adminBtn.setFocusPainted(false);
-        adminBtn.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        navbar.add(logo, BorderLayout.WEST);
+        navbar.add(navButtons, BorderLayout.EAST);
 
+        // ================= HERO =================
+        JPanel hero = new JPanel();
+        hero.setLayout(new BoxLayout(hero, BoxLayout.Y_AXIS));
+        hero.setBackground(new Color(58, 123, 213));
+        hero.setBorder(BorderFactory.createEmptyBorder(40, 20, 40, 20));
 
-        // ACTIONS 
-        addBtn.addActionListener(e -> {
-            new AddComplaint(); // 🔥 THIS FIXES YOUR BUTTON
-        });
+        JLabel heading = new JLabel("Bridge the Gap Between Citizens & Officials");
+        heading.setFont(new Font("Segoe UI", Font.BOLD, 22));
+        heading.setForeground(Color.WHITE);
+        heading.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        viewBtn.addActionListener(e -> {
+        JLabel sub = new JLabel("Report issues and track progress easily");
+        sub.setForeground(Color.WHITE);
+        sub.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JButton reportBtn = new JButton("Report Issue");
+        JButton browseBtn = new JButton("Browse Officials");
+        reportBtn.setPreferredSize(new Dimension(180, 40));
+        browseBtn.setPreferredSize(new Dimension(180, 40));
+
+        reportBtn.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        browseBtn.setFont(new Font("Segoe UI", Font.BOLD, 14));
+
+        reportBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
+        browseBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        hero.add(heading);
+        hero.add(Box.createRigidArea(new Dimension(0, 15)));
+        hero.add(sub);
+        hero.add(Box.createRigidArea(new Dimension(0, 25)));
+        hero.add(reportBtn);
+        hero.add(Box.createRigidArea(new Dimension(0, 15)));
+        hero.add(browseBtn);
+        hero.setPreferredSize(new Dimension(900, 350));
+        reportBtn.setFocusPainted(false);
+        browseBtn.setFocusPainted(false);
+
+        // ================= STATS =================
+        JPanel statsPanel = new JPanel(new GridLayout(1, 3, 20, 20));
+        statsPanel.setBorder(BorderFactory.createEmptyBorder(20, 40, 20, 40));
+        statsPanel.setBackground(new Color(58, 123, 213)); // same as hero
+
+        statsPanel.add(createStatCard("50+", "States & Cities"));
+        statsPanel.add(createStatCard("100+", "Engineers"));
+        statsPanel.add(createStatCard("10+", "Awards"));
+
+        // ================= ACTIONS =================
+        reportBtn.addActionListener(e -> new AddComplaint());
+
+        browseBtn.addActionListener(e -> {
             String name = JOptionPane.showInputDialog(frame, "Enter your name:");
-
             if (name != null && !name.trim().isEmpty()) {
-                new ViewComplaints(name); // pass name
+                new ViewComplaints(name);
             }
         });
-        adminBtn.addActionListener(e -> {
-            new UpdateStatus();
-        });
 
-        // Added elements
-        card.add(title);
-        card.add(subtitle);
-        card.add(addBtn);
-        card.add(viewBtn);
+        // ================= ADD TO FRAME =================
+        mainPanel.add(navbar, BorderLayout.NORTH);
+        mainPanel.add(hero, BorderLayout.CENTER);
+        mainPanel.add(statsPanel, BorderLayout.SOUTH);
 
-        panel.add(card);
-        frame.add(panel);
+        frame.add(mainPanel);
         frame.setVisible(true);
+    }
+
+    //  CARD CREATOR METHOD
+    public static JPanel createStatCard(String number, String label) {
+
+        JPanel card = new JPanel();
+        card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
+        card.setBackground(new Color(255, 255, 255));
+        card.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(220, 220, 220)),
+                BorderFactory.createEmptyBorder(20, 20, 20, 20)
+        ));
+
+        // NUMBER
+        JLabel num = new JLabel(number);
+        num.setFont(new Font("Segoe UI", Font.BOLD, 24));
+        num.setForeground(new Color(58, 123, 213));
+        num.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        // LABEL
+        JLabel text = new JLabel(label);
+        text.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        text.setForeground(Color.DARK_GRAY);
+        text.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        // ICON 
+        JLabel icon = new JLabel("🌍");
+        icon.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 24));
+        icon.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        card.add(icon);
+        card.add(Box.createRigidArea(new Dimension(0, 10)));
+        card.add(num);
+        card.add(Box.createRigidArea(new Dimension(0, 5)));
+        card.add(text);
+
+        return card;
     }
 }

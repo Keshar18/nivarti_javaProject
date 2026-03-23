@@ -91,10 +91,9 @@ public class AddComplaint {
 
                 JOptionPane.showMessageDialog(frame, "Complaint Submitted!");
 
-                // clear fields
-                nameField.setText("");
-                issueField.setText("");
-                locationField.setText("");
+                frame.dispose(); // current window band
+
+                new MainGUI(); // it will open main page 
 
                 
 

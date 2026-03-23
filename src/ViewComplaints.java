@@ -1,13 +1,17 @@
 import java.sql.*;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.awt.BorderLayout;
+import java.awt.*;
 
 public class ViewComplaints extends JFrame {
 
     JTable table;
     DefaultTableModel model;
+    String userName; 
 
-    public ViewComplaints() {
+    public ViewComplaints(String userName) {
+    	this.userName = userName;
 
         setTitle("All Complaints");
         setSize(600, 400);
@@ -20,7 +24,14 @@ public class ViewComplaints extends JFrame {
         table = new JTable(model);
 
         JScrollPane scrollPane = new JScrollPane(table);
-        add(scrollPane);
+
+        setLayout(new BorderLayout()); // important
+
+        JLabel title = new JLabel("Your Complaints", SwingConstants.CENTER);
+        title.setFont(new Font("Segoe UI", Font.BOLD, 18));
+
+        add(title, BorderLayout.NORTH);
+        add(scrollPane, BorderLayout.CENTER);
 
         loadData();
 
@@ -31,9 +42,14 @@ public class ViewComplaints extends JFrame {
         try {
             Connection con = DBConnection.getConnection();
 
-            String query = "SELECT * FROM complaints";
-            Statement st = con.createStatement();
-            ResultSet rs = st.executeQuery(query);
+            String query = "SELECT * FROM complaints WHERE name = ?";
+            PreparedStatement ps = con.prepareStatement(query);
+            ps.setString(1, userName);
+            
+
+            ResultSet rs = ps.executeQuery();
+
+            
 
             model.setRowCount(0); // it will clear old data
 
@@ -46,6 +62,9 @@ public class ViewComplaints extends JFrame {
 
                 model.addRow(new Object[]{id, name, issue, location, status});
             }
+            
+            ps.close();
+            con.close();
 
         } catch (Exception e) {
             e.printStackTrace();

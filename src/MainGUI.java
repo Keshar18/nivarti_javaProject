@@ -68,9 +68,12 @@ public class MainGUI {
         });
 
         viewBtn.addActionListener(e -> {
-            new ViewComplaints();
-        });
+            String name = JOptionPane.showInputDialog(frame, "Enter your name:");
 
+            if (name != null && !name.trim().isEmpty()) {
+                new ViewComplaints(name); // pass name
+            }
+        });
         adminBtn.addActionListener(e -> {
             new UpdateStatus();
         });

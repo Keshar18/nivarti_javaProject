@@ -21,12 +21,12 @@ public class MainGUI {
                 g2d.fillRect(0, 0, getWidth(), getHeight());
             }
         };
-        panel.setLayout(null);
+        panel.setLayout(new GridBagLayout());
 
         // Card Panel
         JPanel card = new JPanel();
         card.setLayout(null);
-        card.setBounds(150, 80, 300, 250);
+        card.setPreferredSize(new Dimension(320, 260));
         card.setBackground(Color.WHITE);
         card.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200)));
 

@@ -39,7 +39,7 @@ public class MainGUI {
         subtitle.setFont(new Font("Segoe UI", Font.PLAIN, 12));
         subtitle.setBounds(95, 45, 200, 20);
 
-        // Buttons
+     // Buttons
         JButton addBtn = new JButton("Add Complaint");
         addBtn.setBounds(50, 90, 200, 35);
         addBtn.setBackground(new Color(0, 123, 255));
@@ -53,15 +53,27 @@ public class MainGUI {
         viewBtn.setForeground(Color.WHITE);
         viewBtn.setFocusPainted(false);
         viewBtn.setFont(new Font("Segoe UI", Font.BOLD, 13));
-        
-        JButton adminBtn = new JButton("Admin Panel"); // added button for status
-        card.add(adminBtn);
 
-        // Action
-        viewBtn.addActionListener(e -> {
-            new ViewComplaints().setVisible(true);
+        JButton adminBtn = new JButton("Admin Panel");
+        adminBtn.setBounds(50, 190, 200, 35); // ✅ IMPORTANT (missing tha)
+        adminBtn.setBackground(new Color(255, 193, 7));
+        adminBtn.setForeground(Color.BLACK);
+        adminBtn.setFocusPainted(false);
+        adminBtn.setFont(new Font("Segoe UI", Font.BOLD, 13));
+
+
+        // ✅ ACTIONS (THIS WAS MISSING)
+        addBtn.addActionListener(e -> {
+            new AddComplaint(); // 🔥 THIS FIXES YOUR BUTTON
         });
-        adminBtn.addActionListener(e -> new UpdateStatus());
+
+        viewBtn.addActionListener(e -> {
+            new ViewComplaints();
+        });
+
+        adminBtn.addActionListener(e -> {
+            new UpdateStatus();
+        });
 
         // Added elements
         card.add(title);

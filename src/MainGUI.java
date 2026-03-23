@@ -55,14 +55,14 @@ public class MainGUI {
         viewBtn.setFont(new Font("Segoe UI", Font.BOLD, 13));
 
         JButton adminBtn = new JButton("Admin Panel");
-        adminBtn.setBounds(50, 190, 200, 35); // ✅ IMPORTANT (missing tha)
+        adminBtn.setBounds(50, 190, 200, 35); 
         adminBtn.setBackground(new Color(255, 193, 7));
         adminBtn.setForeground(Color.BLACK);
         adminBtn.setFocusPainted(false);
         adminBtn.setFont(new Font("Segoe UI", Font.BOLD, 13));
 
 
-        // ✅ ACTIONS (THIS WAS MISSING)
+        // ACTIONS 
         addBtn.addActionListener(e -> {
             new AddComplaint(); // 🔥 THIS FIXES YOUR BUTTON
         });

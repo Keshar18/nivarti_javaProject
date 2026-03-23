@@ -11,41 +11,63 @@ public class AddComplaint {
     public AddComplaint() {
 
         frame = new JFrame("Add Complaint");
-        frame.setSize(400, 400);
+        frame.setSize(500, 450);
         frame.setLocationRelativeTo(null);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-        JPanel panel = new JPanel();
+        // Gradient Background Panel
+        JPanel panel = new JPanel() {
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2d = (Graphics2D) g;
+                Color c1 = new Color(58, 123, 213);
+                Color c2 = new Color(0, 210, 255);
+                GradientPaint gp = new GradientPaint(0, 0, c1, 0, getHeight(), c2);
+                g2d.setPaint(gp);
+                g2d.fillRect(0, 0, getWidth(), getHeight());
+            }
+        };
         panel.setLayout(null);
-        panel.setBackground(new Color(40, 167, 69)); 
 
+        //  MODERN CARD 
+        JPanel card = new JPanel();
+        card.setLayout(null);
+        card.setBounds(75, 50, 350, 300);
+        card.setBackground(Color.WHITE);
+        card.setBorder(BorderFactory.createLineBorder(new Color(220,220,220)));
+
+        // Title
         JLabel title = new JLabel("Add Complaint");
-        title.setBounds(110, 20, 200, 30);
         title.setFont(new Font("Segoe UI", Font.BOLD, 20));
-        title.setForeground(Color.WHITE);
+        title.setBounds(90, 15, 200, 30);
 
+        // Fields
         JLabel nameLabel = new JLabel("Name:");
-        nameLabel.setBounds(50, 80, 100, 25);
+        nameLabel.setBounds(30, 70, 80, 25);
 
         nameField = new JTextField();
-        nameField.setBounds(150, 80, 150, 25);
+        nameField.setBounds(120, 70, 180, 30);
 
         JLabel issueLabel = new JLabel("Issue:");
-        issueLabel.setBounds(50, 120, 100, 25);
+        issueLabel.setBounds(30, 110, 80, 25);
 
         issueField = new JTextField();
-        issueField.setBounds(150, 120, 150, 25);
+        issueField.setBounds(120, 110, 180, 30);
 
         JLabel locationLabel = new JLabel("Location:");
-        locationLabel.setBounds(50, 160, 100, 25);
+        locationLabel.setBounds(30, 150, 80, 25);
 
         locationField = new JTextField();
-        locationField.setBounds(150, 160, 150, 25);
+        locationField.setBounds(120, 150, 180, 30);
 
+        //  Modern Button
         JButton submitBtn = new JButton("Submit");
-        submitBtn.setBounds(130, 220, 120, 35);
+        submitBtn.setBounds(110, 210, 120, 35);
+        submitBtn.setBackground(new Color(58, 123, 213));
+        submitBtn.setForeground(Color.WHITE);
+        submitBtn.setFocusPainted(false);
 
-        // BUTTON FIXED
+        //  BUTTON LOGIC
         submitBtn.addActionListener(e -> {
             try {
                 String name = nameField.getText();
@@ -62,38 +84,37 @@ public class AddComplaint {
                 ps.setString(3, location);
                 ps.setString(4, "Pending");
 
-                ps.executeUpdate();   // DB me data push hua
+                ps.executeUpdate();
 
-                ps.close();           // PreparedStatement band
-                con.close();          // DB connection band here
+                ps.close();
+                con.close();
 
-                JOptionPane.showMessageDialog(frame, "Complaint Submitted Successfully!");
+                JOptionPane.showMessageDialog(frame, "Complaint Submitted!");
 
                 // clear fields
                 nameField.setText("");
                 issueField.setText("");
                 locationField.setText("");
 
-                frame.dispose();
-
-                new ViewComplaints(); // it will open my next page
+                
 
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
         });
 
-        // ADD COMPONENTS
-        panel.add(title);
-        panel.add(nameLabel);
-        panel.add(nameField);
-        panel.add(issueLabel);
-        panel.add(issueField);
-        panel.add(locationLabel);
-        panel.add(locationField);
-        panel.add(submitBtn); // 
+        // Add components
+        card.add(title);
+        card.add(nameLabel);
+        card.add(nameField);
+        card.add(issueLabel);
+        card.add(issueField);
+        card.add(locationLabel);
+        card.add(locationField);
+        card.add(submitBtn);
 
+        panel.add(card);
         frame.add(panel);
-        frame.setVisible(true); //
+        frame.setVisible(true);
     }
 }

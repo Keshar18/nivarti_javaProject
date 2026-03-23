@@ -39,6 +39,8 @@ public class UpdateStatus extends JFrame {
             Statement st = con.createStatement();
             ResultSet rs = st.executeQuery(query);
 
+            model.setRowCount(0); // ✅ ADD THIS
+
             while (rs.next()) {
                 int id = rs.getInt("id");
                 String name = rs.getString("name");

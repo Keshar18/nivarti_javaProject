@@ -63,6 +63,9 @@ public class AddComplaint {
                 ps.setString(4, "Pending");
 
                 ps.executeUpdate();
+                
+                ps.close();
+                con.close();
 
                 JOptionPane.showMessageDialog(frame, "Complaint Submitted Successfully!");
 

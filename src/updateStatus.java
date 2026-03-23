@@ -39,7 +39,7 @@ public class UpdateStatus extends JFrame {
             Statement st = con.createStatement();
             ResultSet rs = st.executeQuery(query);
 
-            model.setRowCount(0); // ✅ ADD THIS
+            model.setRowCount(0); // ADD THIS
 
             while (rs.next()) {
                 int id = rs.getInt("id");
@@ -91,8 +91,8 @@ public class UpdateStatus extends JFrame {
 
                 JOptionPane.showMessageDialog(this, "Status Updated!");
 
-                model.setRowCount(0); // clear table
-                loadData(); // reload
+                model.setRowCount(0); // it will clear table
+                loadData(); // reload the page 
 
             } catch (Exception e) {
                 e.printStackTrace();

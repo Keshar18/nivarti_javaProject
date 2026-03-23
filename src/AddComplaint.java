@@ -17,7 +17,7 @@ public class AddComplaint {
 
         JPanel panel = new JPanel();
         panel.setLayout(null);
-        panel.setBackground(new Color(40, 167, 69)); // ✅ SAME GREEN
+        panel.setBackground(new Color(40, 167, 69)); 
 
         JLabel title = new JLabel("Add Complaint");
         title.setBounds(110, 20, 200, 30);
@@ -45,7 +45,7 @@ public class AddComplaint {
         JButton submitBtn = new JButton("Submit");
         submitBtn.setBounds(130, 220, 120, 35);
 
-        // 🔥 BUTTON FIXED
+        // BUTTON FIXED
         submitBtn.addActionListener(e -> {
             try {
                 String name = nameField.getText();
@@ -62,10 +62,10 @@ public class AddComplaint {
                 ps.setString(3, location);
                 ps.setString(4, "Pending");
 
-                ps.executeUpdate();
-                
-                ps.close();
-                con.close();
+                ps.executeUpdate();   // DB me data push hua
+
+                ps.close();           // PreparedStatement band
+                con.close();          // DB connection band here
 
                 JOptionPane.showMessageDialog(frame, "Complaint Submitted Successfully!");
 
@@ -76,7 +76,7 @@ public class AddComplaint {
 
                 frame.dispose();
 
-                new ViewComplaints(); // open next page
+                new ViewComplaints(); // it will open my next page
 
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -91,9 +91,9 @@ public class AddComplaint {
         panel.add(issueField);
         panel.add(locationLabel);
         panel.add(locationField);
-        panel.add(submitBtn); // ✅ IMPORTANT
+        panel.add(submitBtn); // 
 
         frame.add(panel);
-        frame.setVisible(true); // ✅ IMPORTANT
+        frame.setVisible(true); //
     }
 }

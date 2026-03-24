@@ -58,7 +58,9 @@ public class MainGUI {
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
         card.setBackground(Color.WHITE);
         card.setBorder(BorderFactory.createEmptyBorder(25, 30, 25, 30));
-        card.setPreferredSize(new Dimension(320, 350));
+   
+        card.setPreferredSize(new Dimension(350, 420));
+        card.setMaximumSize(new Dimension(400, 500));
 
         // Title
         JLabel title = new JLabel("Add Complaint");

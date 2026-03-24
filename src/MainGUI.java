@@ -98,21 +98,119 @@ public class MainGUI {
         homePanel.add(statsPanel, BorderLayout.SOUTH);
 
         // ================= ADD PANEL =================
-        JPanel addPanel = new JPanel();
-        addPanel.setLayout(new BoxLayout(addPanel, BoxLayout.Y_AXIS));
+        JPanel addPanel = new JPanel(new GridBagLayout());
+        addPanel.setBackground(new Color(240, 245, 250)); // light bg
 
-        JButton backFromAdd = new JButton("← Back");
-        backFromAdd.setAlignmentX(Component.CENTER_ALIGNMENT);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        JLabel addLabel = new JLabel("Add Complaint Screen");
-        addLabel.setFont(new Font("Segoe UI", Font.BOLD, 18));
-        addLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        // ===== CARD PANEL =====
+        JPanel card = new JPanel();
+        card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
+        card.setBackground(Color.WHITE);
+        card.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(220, 220, 220)),
+                BorderFactory.createEmptyBorder(30, 40, 30, 40)
+        ));
 
-        addPanel.add(Box.createVerticalGlue());
-        addPanel.add(addLabel);
-        addPanel.add(Box.createRigidArea(new Dimension(0, 20)));
-        addPanel.add(backFromAdd);
-        addPanel.add(Box.createVerticalGlue());
+        // ===== TITLE =====
+        JLabel title = new JLabel("Add Complaint");
+        title.setFont(new Font("Segoe UI", Font.BOLD, 22));
+        title.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        // ===== INPUT FIELDS =====
+        JTextField nameField = new JTextField();
+        JTextField issueField = new JTextField();
+        JTextField locationField = new JTextField();
+
+        Dimension fieldSize = new Dimension(300, 35);
+
+        nameField.setMaximumSize(fieldSize);
+        issueField.setMaximumSize(fieldSize);
+        locationField.setMaximumSize(fieldSize);
+
+        // ===== LABEL STYLE =====
+        Font labelFont = new Font("Segoe UI", Font.PLAIN, 14);
+
+        JLabel nameLabel = new JLabel("Name");
+        nameLabel.setFont(labelFont);
+
+        JLabel issueLabel = new JLabel("Issue");
+        issueLabel.setFont(labelFont);
+
+        JLabel locationLabel = new JLabel("Location");
+        locationLabel.setFont(labelFont);
+
+        // ===== BUTTON =====
+        JButton submitBtn = new JButton("Submit");
+        submitBtn.setBackground(new Color(0, 120, 215));
+        submitBtn.setForeground(Color.WHITE);
+        submitBtn.setFocusPainted(false);
+        submitBtn.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        submitBtn.setMaximumSize(new Dimension(200, 40));
+        submitBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        // ===== BACK BUTTON =====
+        JButton backBtn = new JButton("← Back");
+        backBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        // ===== ADD COMPONENTS =====
+        card.add(title);
+        card.add(Box.createRigidArea(new Dimension(0, 20)));
+
+        card.add(nameLabel);
+        card.add(nameField);
+        card.add(Box.createRigidArea(new Dimension(0, 10)));
+
+        card.add(issueLabel);
+        card.add(issueField);
+        card.add(Box.createRigidArea(new Dimension(0, 10)));
+
+        card.add(locationLabel);
+        card.add(locationField);
+        card.add(Box.createRigidArea(new Dimension(0, 20)));
+
+        card.add(submitBtn);
+        card.add(Box.createRigidArea(new Dimension(0, 10)));
+        card.add(backBtn);
+
+        // CENTER CARD
+        addPanel.add(card);
+
+        // ===== ACTIONS =====
+        submitBtn.addActionListener(e -> {
+            String name = nameField.getText();
+            String issue = issueField.getText();
+            String location = locationField.getText();
+
+            try {
+                Connection con = DBConnection.getConnection();
+                String query = "INSERT INTO complaints(name, issue, location, status) VALUES (?, ?, ?, 'Pending')";
+                PreparedStatement ps = con.prepareStatement(query);
+
+                ps.setString(1, name);
+                ps.setString(2, issue);
+                ps.setString(3, location);
+
+                ps.executeUpdate();
+
+                JOptionPane.showMessageDialog(null, "Complaint Submitted!");
+
+                nameField.setText("");
+                issueField.setText("");
+                locationField.setText("");
+
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
+
+        // BACK BUTTON
+        backBtn.addActionListener(e -> cardLayout.show(mainPanel, "HOME"));
+
+        // ADD TO MAIN PANEL
+        mainPanel.add(addPanel, "ADD");
 
         // ================= VIEW PANEL =================
         JPanel viewPanel = new JPanel();

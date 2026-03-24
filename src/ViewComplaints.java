@@ -5,12 +5,14 @@ import java.sql.*;
 
 public class ViewComplaints {
 
+    static DefaultTableModel model;
+
     public static JPanel createPanel(CardLayout cardLayout, JPanel mainPanel) {
 
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(new Color(244, 247, 251));
 
-        // ===== TITLE =====
+        // TITLE
         JLabel title = new JLabel("My Complaints");
         title.setFont(new Font("Segoe UI", Font.BOLD, 22));
         title.setHorizontalAlignment(SwingConstants.CENTER);
@@ -18,23 +20,33 @@ public class ViewComplaints {
 
         panel.add(title, BorderLayout.NORTH);
 
-        // ===== TABLE =====
+        // TABLE
         String[] columns = {"Issue", "Location", "Status"};
+        model = new DefaultTableModel(columns, 0);
 
-        DefaultTableModel model = new DefaultTableModel(columns, 0);
         JTable table = new JTable(model);
         table.setRowHeight(30);
-        table.setFont(new Font("Segoe UI", Font.PLAIN, 13));
 
         JScrollPane scrollPane = new JScrollPane(table);
-        scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 30, 10, 30));
-
         panel.add(scrollPane, BorderLayout.CENTER);
 
-        // ===== GET USER NAME =====
-        String userName = JOptionPane.showInputDialog("Enter your name:");
+        // BACK BUTTON
+        JButton backBtn = new JButton("← Back");
+        backBtn.addActionListener(e -> cardLayout.show(mainPanel, "HOME"));
 
-        // ===== LOAD DATA =====
+        JPanel bottom = new JPanel();
+        bottom.add(backBtn);
+
+        panel.add(bottom, BorderLayout.SOUTH);
+
+        return panel;
+    }
+
+    // 🔥 LOAD DATA METHOD
+    public static void loadData(String userName) {
+
+        model.setRowCount(0); // clear table
+
         try {
             Connection con = DBConnection.getConnection();
 
@@ -45,31 +57,15 @@ public class ViewComplaints {
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
-                String issue = rs.getString("issue");
-                String location = rs.getString("location");
-                String status = rs.getString("status");
-
-                model.addRow(new Object[]{issue, location, status});
+                model.addRow(new Object[]{
+                        rs.getString("issue"),
+                        rs.getString("location"),
+                        rs.getString("status")
+                });
             }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        // ===== BACK BUTTON =====
-        JButton backBtn = new JButton("← Back");
-        backBtn.setBackground(new Color(58, 123, 213));
-        backBtn.setForeground(Color.WHITE);
-        backBtn.setFocusPainted(false);
-
-        backBtn.addActionListener(e -> cardLayout.show(mainPanel, "HOME"));
-
-        JPanel bottom = new JPanel();
-        bottom.setBackground(new Color(244, 247, 251));
-        bottom.add(backBtn);
-
-        panel.add(bottom, BorderLayout.SOUTH);
-
-        return panel;
     }
 }

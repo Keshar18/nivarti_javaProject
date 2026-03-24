@@ -28,33 +28,30 @@ public class MainGUI {
         sub.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         sub.setForeground(Color.WHITE);
         sub.setAlignmentX(Component.CENTER_ALIGNMENT);
-        
-        JPanel viewPanel = ViewComplaints.createPanel(cardLayout, mainPanel);
-        mainPanel.add(viewPanel, "VIEW");
 
-        JButton reportBtn = new JButton("Report Issue");
-        JButton browseBtn = new JButton("Browse Officials");
+        JButton reportBtn = new JButton("Add Complaint");
+        JButton myBtn = new JButton("My Complaints");
 
-        Dimension btnSize = new Dimension(180, 40);
+        Dimension btnSize = new Dimension(200, 45);
 
-        reportBtn.setMaximumSize(btnSize);
-        browseBtn.setMaximumSize(btnSize);
-
-        reportBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
-        browseBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
-        browseBtn.addActionListener(e -> cardLayout.show(mainPanel, "VIEW"));
+        for (JButton btn : new JButton[]{reportBtn, myBtn}) {
+            btn.setMaximumSize(btnSize);
+            btn.setAlignmentX(Component.CENTER_ALIGNMENT);
+            btn.setBackground(Color.WHITE);
+            btn.setFocusPainted(false);
+        }
 
         homePanel.add(Box.createVerticalGlue());
         homePanel.add(heading);
         homePanel.add(Box.createRigidArea(new Dimension(0, 10)));
         homePanel.add(sub);
-        homePanel.add(Box.createRigidArea(new Dimension(0, 20)));
+        homePanel.add(Box.createRigidArea(new Dimension(0, 25)));
         homePanel.add(reportBtn);
         homePanel.add(Box.createRigidArea(new Dimension(0, 10)));
-        homePanel.add(browseBtn);
+        homePanel.add(myBtn);
         homePanel.add(Box.createVerticalGlue());
 
-        // ================= ADD COMPLAINT PANEL =================
+        // ================= ADD PANEL =================
         JPanel addPanel = new JPanel(new GridBagLayout());
         addPanel.setBackground(new Color(240, 244, 250));
 
@@ -62,31 +59,21 @@ public class MainGUI {
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
         card.setBackground(Color.WHITE);
         card.setBorder(BorderFactory.createEmptyBorder(25, 30, 25, 30));
-   
         card.setPreferredSize(new Dimension(350, 420));
-        card.setMaximumSize(new Dimension(420, 500));
 
-        // Title
         JLabel title = new JLabel("Add Complaint");
         title.setFont(new Font("Segoe UI", Font.BOLD, 18));
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // Input fields
         JTextField nameField = new JTextField();
         JTextField issueField = new JTextField();
         JTextField locationField = new JTextField();
 
         Dimension fieldSize = new Dimension(320, 40);
 
-        nameField.setMaximumSize(fieldSize);
-        issueField.setMaximumSize(fieldSize);
-        locationField.setMaximumSize(fieldSize);
-
-        // Styling
-        Color inputBg = new Color(245, 247, 250);
-
         for (JTextField field : new JTextField[]{nameField, issueField, locationField}) {
-            field.setBackground(inputBg);
+            field.setMaximumSize(fieldSize);
+            field.setBackground(new Color(245, 247, 250));
             field.setBorder(BorderFactory.createCompoundBorder(
                     BorderFactory.createLineBorder(new Color(200, 200, 200)),
                     BorderFactory.createEmptyBorder(8, 10, 8, 10)
@@ -95,7 +82,6 @@ public class MainGUI {
             field.setAlignmentX(Component.LEFT_ALIGNMENT);
         }
 
-        // Labels
         JLabel nameLabel = new JLabel("Full Name");
         JLabel issueLabel = new JLabel("Describe Issue");
         JLabel locationLabel = new JLabel("Location");
@@ -106,7 +92,6 @@ public class MainGUI {
             label.setAlignmentX(Component.LEFT_ALIGNMENT);
         }
 
-        // Buttons
         JButton submitBtn = new JButton("Submit");
         JButton backBtn = new JButton("← Back");
 
@@ -145,13 +130,18 @@ public class MainGUI {
 
         addPanel.add(card);
 
+        // ================= MY COMPLAINTS PANEL =================
+        JPanel myPanel = ViewComplaints.createPanel(cardLayout, mainPanel);
+
         // ================= NAVIGATION =================
         reportBtn.addActionListener(e -> cardLayout.show(mainPanel, "ADD"));
+        myBtn.addActionListener(e -> cardLayout.show(mainPanel, "MY"));
         backBtn.addActionListener(e -> cardLayout.show(mainPanel, "HOME"));
 
         // ================= ADD TO MAIN =================
         mainPanel.add(homePanel, "HOME");
         mainPanel.add(addPanel, "ADD");
+        mainPanel.add(myPanel, "MY");
 
         frame.add(mainPanel);
         frame.setVisible(true);

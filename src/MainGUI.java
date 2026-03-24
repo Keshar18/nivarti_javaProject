@@ -122,15 +122,9 @@ public class MainGUI {
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         // ===== INPUT FIELDS =====
-        JTextField nameField = new JTextField();
-        JTextField issueField = new JTextField();
-        JTextField locationField = new JTextField();
+        
 
-        Dimension fieldSize = new Dimension(300, 35);
-
-        nameField.setMaximumSize(fieldSize);
-        issueField.setMaximumSize(fieldSize);
-        locationField.setMaximumSize(fieldSize);
+        
 
      // ===== STYLE COLORS =====
         Color primary = new Color(0, 120, 215);

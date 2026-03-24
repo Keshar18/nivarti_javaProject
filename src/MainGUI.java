@@ -1,5 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 
 public class MainGUI {
 
@@ -130,17 +132,43 @@ public class MainGUI {
         issueField.setMaximumSize(fieldSize);
         locationField.setMaximumSize(fieldSize);
 
-        // ===== LABEL STYLE =====
-        Font labelFont = new Font("Segoe UI", Font.PLAIN, 14);
+     // ===== STYLE COLORS =====
+        Color primary = new Color(0, 120, 215);
+        Color inputBg = new Color(245, 247, 250);
 
-        JLabel nameLabel = new JLabel("Name");
+        // ===== INPUT FIELDS =====
+        JTextField nameField = new JTextField();
+        JTextField issueField = new JTextField();
+        JTextField locationField = new JTextField();
+
+        Dimension fieldSize = new Dimension(300, 40);
+
+        // styling inputs
+        for (JTextField field : new JTextField[]{nameField, issueField, locationField}) {
+            field.setMaximumSize(fieldSize);
+            field.setBackground(inputBg);
+            field.setBorder(BorderFactory.createCompoundBorder(
+                    BorderFactory.createLineBorder(new Color(200, 200, 200)),
+                    BorderFactory.createEmptyBorder(10, 10, 10, 10)
+            ));
+            field.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        }
+
+        // ===== LABELS =====
+        Font labelFont = new Font("Segoe UI", Font.BOLD, 13);
+        Color labelColor = new Color(100, 100, 100);
+
+        JLabel nameLabel = new JLabel("Full Name");
         nameLabel.setFont(labelFont);
+        nameLabel.setForeground(labelColor);
 
-        JLabel issueLabel = new JLabel("Issue");
+        JLabel issueLabel = new JLabel("Describe Issue");
         issueLabel.setFont(labelFont);
+        issueLabel.setForeground(labelColor);
 
         JLabel locationLabel = new JLabel("Location");
         locationLabel.setFont(labelFont);
+        locationLabel.setForeground(labelColor);
 
         // ===== BUTTON =====
         JButton submitBtn = new JButton("Submit");
@@ -238,7 +266,7 @@ public class MainGUI {
         reportBtn.addActionListener(e -> cardLayout.show(mainPanel, "ADD"));
         browseBtn.addActionListener(e -> cardLayout.show(mainPanel, "VIEW"));
 
-        backFromAdd.addActionListener(e -> cardLayout.show(mainPanel, "HOME"));
+        backBtn.addActionListener(e -> cardLayout.show(mainPanel, "HOME"));
         backFromView.addActionListener(e -> cardLayout.show(mainPanel, "HOME"));
 
         // ================= FRAME =================

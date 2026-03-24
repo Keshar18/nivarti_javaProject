@@ -69,33 +69,35 @@ public class AddComplaint {
 
         //  BUTTON LOGIC
         submitBtn.addActionListener(e -> {
+
+            String name = nameField.getText();
+            String issue = issueField.getText();
+            String location = locationField.getText();
+
+            if(name.isEmpty() || issue.isEmpty() || location.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Please fill all fields!");
+                return;
+            }
+
             try {
-                String name = nameField.getText();
-                String issue = issueField.getText();
-                String location = locationField.getText();
-
-                String query = "INSERT INTO complaints(name, issue, location, status) VALUES (?, ?, ?, ?)";
-
                 Connection con = DBConnection.getConnection();
+
+                String query = "INSERT INTO complaints(name, issue, location, status) VALUES (?, ?, ?, 'Pending')";
                 PreparedStatement ps = con.prepareStatement(query);
 
                 ps.setString(1, name);
                 ps.setString(2, issue);
                 ps.setString(3, location);
-                ps.setString(4, "Pending");
 
                 ps.executeUpdate();
 
-                ps.close();
-                con.close();
+                // ✅ SUCCESS MESSAGE
+                JOptionPane.showMessageDialog(null, "Complaint Submitted Successfully!");
 
-                JOptionPane.showMessageDialog(frame, "Complaint Submitted!");
-
-                frame.dispose(); // current window band
-
-                new MainGUI(); // it will open main page 
-
-                
+                // ✅ CLEAR FIELDS
+                nameField.setText("");
+                issueField.setText("");
+                locationField.setText("");
 
             } catch (Exception ex) {
                 ex.printStackTrace();

@@ -3,27 +3,34 @@ import java.util.Properties;
 import java.sql.Connection;
 import java.sql.DriverManager;
 
-public class DBConnection {   // 🔥 YE LINE MISSING THI
+public class DBConnection {  
+	
+	
 
     public static Connection getConnection() {
-        try {
-            Properties props = new Properties();
+    	
+    	    try {
+    	        Properties props = new Properties();
 
-            InputStream input = DBConnection.class
-                    .getClassLoader()
-                    .getResourceAsStream("config.properties");
+    	        InputStream input = DBConnection.class
+    	                .getClassLoader()
+    	                .getResourceAsStream("config.properties");
 
-            props.load(input);
+    	        if (input == null) {
+    	            System.out.println("config.properties NOT FOUND ❌");
+    	            return null;
+    	        }
 
-            String url = props.getProperty("db.url");
-            String user = props.getProperty("db.user");
-            String pass = props.getProperty("db.password");
+    	        props.load(input);
 
-            return DriverManager.getConnection(url, user, pass);
+    	        String url = props.getProperty("db.url");
+    	        String user = props.getProperty("db.user");
+    	        String pass = props.getProperty("db.password");
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-}
+    	        return DriverManager.getConnection(url, user, pass);
+
+    	    } catch (Exception e) {
+    	        e.printStackTrace();
+    	        return null;
+    	    }
+    	}

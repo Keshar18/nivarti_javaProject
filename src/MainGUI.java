@@ -28,6 +28,9 @@ public class MainGUI {
         sub.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         sub.setForeground(Color.WHITE);
         sub.setAlignmentX(Component.CENTER_ALIGNMENT);
+        
+        JPanel viewPanel = ViewComplaints.createPanel(cardLayout, mainPanel);
+        mainPanel.add(viewPanel, "VIEW");
 
         JButton reportBtn = new JButton("Report Issue");
         JButton browseBtn = new JButton("Browse Officials");
@@ -39,6 +42,7 @@ public class MainGUI {
 
         reportBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
         browseBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
+        browseBtn.addActionListener(e -> cardLayout.show(mainPanel, "VIEW"));
 
         homePanel.add(Box.createVerticalGlue());
         homePanel.add(heading);
@@ -60,7 +64,7 @@ public class MainGUI {
         card.setBorder(BorderFactory.createEmptyBorder(25, 30, 25, 30));
    
         card.setPreferredSize(new Dimension(350, 420));
-        card.setMaximumSize(new Dimension(400, 500));
+        card.setMaximumSize(new Dimension(420, 500));
 
         // Title
         JLabel title = new JLabel("Add Complaint");
@@ -72,7 +76,7 @@ public class MainGUI {
         JTextField issueField = new JTextField();
         JTextField locationField = new JTextField();
 
-        Dimension fieldSize = new Dimension(260, 35);
+        Dimension fieldSize = new Dimension(320, 40);
 
         nameField.setMaximumSize(fieldSize);
         issueField.setMaximumSize(fieldSize);

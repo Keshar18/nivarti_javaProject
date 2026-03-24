@@ -1,73 +1,46 @@
-import java.sql.*;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import java.awt.BorderLayout;
 import java.awt.*;
 
-public class ViewComplaints extends JFrame {
+public class ViewComplaints {
 
-    JTable table;
-    DefaultTableModel model;
-    String userName; 
+    public static JPanel createPanel(CardLayout cardLayout, JPanel mainPanel) {
 
-    public ViewComplaints(String userName) {
-    	this.userName = userName;
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBackground(new Color(240, 244, 250));
 
-        setTitle("All Complaints");
-        setSize(600, 400);
-        setLocationRelativeTo(null);
+        // Title
+        JLabel title = new JLabel("View Complaints");
+        title.setFont(new Font("Segoe UI", Font.BOLD, 20));
+        title.setHorizontalAlignment(SwingConstants.CENTER);
 
-        // Table columns
+        panel.add(title, BorderLayout.NORTH);
+
+        // Table
         String[] columns = {"ID", "Name", "Issue", "Location", "Status"};
 
-        model = new DefaultTableModel(columns, 0);
-        table = new JTable(model);
+        DefaultTableModel model = new DefaultTableModel(columns, 0);
+
+        JTable table = new JTable(model);
+        table.setRowHeight(25);
 
         JScrollPane scrollPane = new JScrollPane(table);
+        panel.add(scrollPane, BorderLayout.CENTER);
 
-        setLayout(new BorderLayout()); // important
+        // Dummy data (for now)
+        model.addRow(new Object[]{1, "Aditya", "Street Light Broken", "Delhi", "Pending"});
+        model.addRow(new Object[]{2, "Rahul", "Water Leakage", "Mumbai", "Resolved"});
+        model.addRow(new Object[]{3, "Priya", "Garbage Issue", "Pune", "Pending"});
 
-        JLabel title = new JLabel("Your Complaints", SwingConstants.CENTER);
-        title.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        // Back button
+        JButton backBtn = new JButton("← Back");
+        backBtn.addActionListener(e -> cardLayout.show(mainPanel, "HOME"));
 
-        add(title, BorderLayout.NORTH);
-        add(scrollPane, BorderLayout.CENTER);
+        JPanel bottom = new JPanel();
+        bottom.add(backBtn);
 
-        loadData();
+        panel.add(bottom, BorderLayout.SOUTH);
 
-        setVisible(true);
-    }
-
-    public void loadData() {
-        try {
-            Connection con = DBConnection.getConnection();
-
-            String query = "SELECT * FROM complaints WHERE name = ?";
-            PreparedStatement ps = con.prepareStatement(query);
-            ps.setString(1, userName);
-            
-
-            ResultSet rs = ps.executeQuery();
-
-            
-
-            model.setRowCount(0); // it will clear old data
-
-            while (rs.next()) {
-                int id = rs.getInt("id");
-                String name = rs.getString("name");
-                String issue = rs.getString("issue");
-                String location = rs.getString("location");
-                String status = rs.getString("status");
-
-                model.addRow(new Object[]{id, name, issue, location, status});
-            }
-            
-            ps.close();
-            con.close();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        return panel;
     }
 }

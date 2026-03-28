@@ -123,7 +123,8 @@ public class ViewComplaints {
                 model.addRow(new Object[]{
                         rs.getString("issue"),
                         rs.getString("location"),
-                        rs.getString("status")
+                        rs.getString("status"),
+                        rs.getString("resolved_by")
                 });
             }
 

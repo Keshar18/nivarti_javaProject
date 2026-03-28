@@ -8,27 +8,53 @@ public class UpdateStatus extends JFrame {
     JTable table;
     DefaultTableModel model;
 
-    public UpdateStatus() {
-        setTitle("Update Complaint Status");
-        setSize(700, 400);
-        setLocationRelativeTo(null);
+    public void updateStatus() {
 
-        String[] columns = {"ID", "Name", "Issue", "Location", "Status"};
-        model = new DefaultTableModel(columns, 0);
-        table = new JTable(model);
+        int selectedRow = table.getSelectedRow();
 
-        JScrollPane scrollPane = new JScrollPane(table);
-        add(scrollPane, BorderLayout.CENTER);
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Select a complaint first!");
+            return;
+        }
 
-        JButton updateBtn = new JButton("Update Status");
-        add(updateBtn, BorderLayout.SOUTH);
+        int id = (int) model.getValueAt(selectedRow, 0);
 
-        loadData();
+        String[] options = {"Pending", "In Progress", "Resolved"};
+        String newStatus = (String) JOptionPane.showInputDialog(
+                this,
+                "Select new status:",
+                "Update Status",
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                options,
+                options[0]
+        );
 
-        // Button click
-        updateBtn.addActionListener(e -> updateStatus());
+        // 🔥 NEW: Admin name input
+        String adminName = JOptionPane.showInputDialog("Enter your name:");
 
-        setVisible(true);
+        if (newStatus != null && adminName != null) {
+            try {
+                Connection con = DBConnection.getConnection();
+
+                String query = "UPDATE complaints SET status=?, resolved_by=? WHERE id=?";
+                PreparedStatement ps = con.prepareStatement(query);
+
+                ps.setString(1, newStatus);
+                ps.setString(2, adminName);
+                ps.setInt(3, id);
+
+                ps.executeUpdate();
+
+                JOptionPane.showMessageDialog(this, "Status Updated!");
+
+                model.setRowCount(0);
+                loadData();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     // Load data from DB

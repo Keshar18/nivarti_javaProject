@@ -22,7 +22,7 @@ public class ViewComplaints {
         panel.add(title, BorderLayout.NORTH);
 
         // TABLE
-        String[] columns = {"Issue", "Location", "Status"};
+        String[] columns = {"Issue", "Location", "Status","Resolved By"};
         model = new DefaultTableModel(columns, 0);
 
         JTable table = new JTable(model);
@@ -113,7 +113,7 @@ public class ViewComplaints {
         try {
             Connection con = DBConnection.getConnection();
 
-            String query = "SELECT issue, location, status FROM complaints WHERE name = ?";
+            String query = "SELECT issue, location, status, resolved_by FROM complaints WHERE name = ?";
             PreparedStatement ps = con.prepareStatement(query);
             ps.setString(1, userName);
 

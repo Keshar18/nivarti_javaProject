@@ -35,25 +35,43 @@ public class MainGUI {
 
         JButton reportBtn = new JButton("Add Complaint");
         JButton myBtn = new JButton("My Complaints");
+        JButton adminBtn = new JButton("Admin Panel");
+        JButton userLoginBtn = new JButton("User Login");
+        JButton adminLoginBtn = new JButton("Admin Login");
 
         Dimension btnSize = new Dimension(200, 45);
 
-        for (JButton btn : new JButton[]{reportBtn, myBtn}) {
+        for (JButton btn : new JButton[]{reportBtn, myBtn, userLoginBtn, adminLoginBtn}) {
             btn.setMaximumSize(btnSize);
             btn.setAlignmentX(Component.CENTER_ALIGNMENT);
             btn.setBackground(Color.WHITE);
             btn.setFocusPainted(false);
         }
-
         homePanel.add(Box.createVerticalGlue());
+
         homePanel.add(heading);
         homePanel.add(Box.createRigidArea(new Dimension(0, 10)));
         homePanel.add(sub);
-        homePanel.add(Box.createRigidArea(new Dimension(0, 25)));
+        homePanel.add(Box.createRigidArea(new Dimension(0, 30)));
+
         homePanel.add(reportBtn);
-        homePanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        homePanel.add(Box.createRigidArea(new Dimension(0, 15)));
+
         homePanel.add(myBtn);
+        homePanel.add(Box.createRigidArea(new Dimension(0, 20)));
+        
+     //  NEW PANEL FOR LOGIN BUTTONS
+        JPanel loginPanel = new JPanel();
+        loginPanel.setOpaque(false);
+
+        loginPanel.add(userLoginBtn);
+        loginPanel.add(Box.createRigidArea(new Dimension(20, 0)));
+        loginPanel.add(adminLoginBtn);
+
+        homePanel.add(loginPanel);
+
         homePanel.add(Box.createVerticalGlue());
+        
 
         // ================= ADD PANEL =================
         JPanel addPanel = new JPanel(new GridBagLayout());
@@ -196,10 +214,22 @@ public class MainGUI {
                 JOptionPane.showMessageDialog(null, "Please submit a complaint first!");
                 return;
             }
+            
+            
 
             ViewComplaints.loadData(currentUser);
             cardLayout.show(mainPanel, "MY");
         });
+        
+        userLoginBtn.addActionListener(e -> 
+        JOptionPane.showMessageDialog(null, "User Login Coming Soon 🔒")
+    );
+
+    adminLoginBtn.addActionListener(e -> 
+        JOptionPane.showMessageDialog(null, "Admin Login Coming Soon 🔒")
+    );
+        
+        adminBtn.addActionListener(e -> new UpdateStatus());
 
         backBtn.addActionListener(e -> cardLayout.show(mainPanel, "HOME"));
 

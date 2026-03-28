@@ -70,8 +70,6 @@ public class AddComplaint {
         //  BUTTON LOGIC
         submitBtn.addActionListener(e -> {
 
-            System.out.println("CLICKED"); // debug
-
             String name = nameField.getText();
             String issue = issueField.getText();
             String location = locationField.getText();
@@ -96,19 +94,23 @@ public class AddComplaint {
                 ps.setString(2, issue);
                 ps.setString(3, location);
 
-                int rows = ps.executeUpdate();
+                int result = ps.executeUpdate();
 
-                if(rows > 0) {
-                    JOptionPane.showMessageDialog(null, "Complaint Submitted Successfully! ✅");
+                if(result > 0) {
+                    JOptionPane.showMessageDialog(null, "Complaint Submitted Successfully ✅");
+
+                    // 🔥 CLEAR FIELDS
+                    nameField.setText("");
+                    issueField.setText("");
+                    locationField.setText("");
+
+                    // 🔥 PAGE CHANGE (IMPORTANT)
+                    cardLayout.show(mainPanel, "HOME");
                 }
-
-                // clear fields
-                nameField.setText("");
-                issueField.setText("");
-                locationField.setText("");
 
             } catch (Exception ex) {
                 ex.printStackTrace();
+                JOptionPane.showMessageDialog(null, "Error: " + ex.getMessage());
             }
         });
        

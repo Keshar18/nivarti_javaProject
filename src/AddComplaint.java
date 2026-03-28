@@ -70,6 +70,8 @@ public class AddComplaint {
         //  BUTTON LOGIC
         submitBtn.addActionListener(e -> {
 
+            System.out.println("CLICKED"); // debug
+
             String name = nameField.getText();
             String issue = issueField.getText();
             String location = locationField.getText();
@@ -82,6 +84,11 @@ public class AddComplaint {
             try {
                 Connection con = DBConnection.getConnection();
 
+                if(con == null) {
+                    JOptionPane.showMessageDialog(null, "Database not connected ❌");
+                    return;
+                }
+
                 String query = "INSERT INTO complaints(name, issue, location, status) VALUES (?, ?, ?, 'Pending')";
                 PreparedStatement ps = con.prepareStatement(query);
 
@@ -89,12 +96,13 @@ public class AddComplaint {
                 ps.setString(2, issue);
                 ps.setString(3, location);
 
-                ps.executeUpdate();
+                int rows = ps.executeUpdate();
 
-                // ✅ SUCCESS MESSAGE
-                JOptionPane.showMessageDialog(null, "Complaint Submitted Successfully!");
+                if(rows > 0) {
+                    JOptionPane.showMessageDialog(null, "Complaint Submitted Successfully! ✅");
+                }
 
-                // ✅ CLEAR FIELDS
+                // clear fields
                 nameField.setText("");
                 issueField.setText("");
                 locationField.setText("");
@@ -103,6 +111,7 @@ public class AddComplaint {
                 ex.printStackTrace();
             }
         });
+       
 
         // Add components
         card.add(title);

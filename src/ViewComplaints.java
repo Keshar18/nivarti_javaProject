@@ -6,9 +6,11 @@ import java.sql.*;
 public class ViewComplaints {
 
     static DefaultTableModel model;
+    
+    
 
     public static JPanel createPanel(CardLayout cardLayout, JPanel mainPanel) {
-
+    	
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(new Color(244, 247, 251));
 
@@ -44,6 +46,7 @@ public class ViewComplaints {
 
     // 🔥 LOAD DATA METHOD
     public static void loadData(String userName) {
+    	   if(model == null) return;
 
         model.setRowCount(0); // clear table
 
@@ -69,3 +72,6 @@ public class ViewComplaints {
         }
     }
 }
+
+
+

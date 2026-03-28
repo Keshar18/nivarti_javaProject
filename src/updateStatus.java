@@ -9,6 +9,38 @@ public class UpdateStatus extends JFrame {
     DefaultTableModel model;
 
     public void updateStatus() {
+    	
+    	 setTitle("Update Complaint Status");
+    	    setSize(700, 400);
+    	    setLocationRelativeTo(null);
+    	    
+
+    	    // 🔥 STEP 1: FILTER BUTTON PANEL (YAHAN ADD KARNA HAI)
+    	    JPanel topPanel = new JPanel();
+
+    	    JButton allBtn = new JButton("All");
+    	    JButton pendingBtn = new JButton("Pending");
+    	    JButton progressBtn = new JButton("In Progress");
+    	    JButton resolvedBtn = new JButton("Resolved");
+
+    	    topPanel.add(allBtn);
+    	    topPanel.add(pendingBtn);
+    	    topPanel.add(progressBtn);
+    	    topPanel.add(resolvedBtn);
+
+    	    add(topPanel, BorderLayout.NORTH);  // ✅ VERY IMPORTANT
+
+    	    String[] columns = {"ID", "Name", "Issue", "Location", "Status"};
+    	    model = new DefaultTableModel(columns, 0);
+    	    table = new JTable(model);
+
+    	    JScrollPane scrollPane = new JScrollPane(table);
+    	    add(scrollPane, BorderLayout.CENTER);
+
+    	    JButton updateBtn = new JButton("Update Status");
+    	    add(updateBtn, BorderLayout.SOUTH);
+
+    	    loadData("All");
 
         int selectedRow = table.getSelectedRow();
 
@@ -30,7 +62,7 @@ public class UpdateStatus extends JFrame {
                 options[0]
         );
 
-        // 🔥 NEW: Admin name input
+        // Admin name input
         String adminName = JOptionPane.showInputDialog("Enter your name:");
 
         if (newStatus != null && adminName != null) {

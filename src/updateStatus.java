@@ -8,153 +8,206 @@ public class UpdateStatus extends JFrame {
     JTable table;
     DefaultTableModel model;
 
-    public void updateStatus() {
-    	
-    	 setTitle("Update Complaint Status");
-    	    setSize(700, 400);
-    	    setLocationRelativeTo(null);
-    	    
+    JLabel totalLabel, pendingLabel, progressLabel, resolvedLabel;
 
-    	    // 🔥 STEP 1: FILTER BUTTON PANEL (YAHAN ADD KARNA HAI)
-    	    JPanel topPanel = new JPanel();
+    public UpdateStatus() {
 
-    	    JButton allBtn = new JButton("All");
-    	    JButton pendingBtn = new JButton("Pending");
-    	    JButton progressBtn = new JButton("In Progress");
-    	    JButton resolvedBtn = new JButton("Resolved");
+        setTitle("Admin Panel");
+        setSize(900, 500);
+        setLocationRelativeTo(null);
+        setLayout(new BorderLayout());
 
-    	    topPanel.add(allBtn);
-    	    topPanel.add(pendingBtn);
-    	    topPanel.add(progressBtn);
-    	    topPanel.add(resolvedBtn);
+        // 🔥 TOP PANEL
+        JPanel topPanel = new JPanel();
 
-    	    add(topPanel, BorderLayout.NORTH);  // ✅ VERY IMPORTANT
+        JTextField searchField = new JTextField(15);
+        JButton searchBtn = new JButton("Search");
 
-    	    String[] columns = {"ID", "Name", "Issue", "Location", "Status"};
-    	    model = new DefaultTableModel(columns, 0);
-    	    table = new JTable(model);
+        JButton allBtn = new JButton("All");
+        JButton pendingBtn = new JButton("Pending");
+        JButton progressBtn = new JButton("In Progress");
+        JButton resolvedBtn = new JButton("Resolved");
 
-    	    JScrollPane scrollPane = new JScrollPane(table);
-    	    add(scrollPane, BorderLayout.CENTER);
+        topPanel.add(new JLabel("Search: "));
+        topPanel.add(searchField);
+        topPanel.add(searchBtn);
 
-    	    JButton updateBtn = new JButton("Update Status");
-    	    add(updateBtn, BorderLayout.SOUTH);
+        topPanel.add(allBtn);
+        topPanel.add(pendingBtn);
+        topPanel.add(progressBtn);
+        topPanel.add(resolvedBtn);
 
-    	    loadData("All");
+        add(topPanel, BorderLayout.NORTH);
 
-        int selectedRow = table.getSelectedRow();
+        // 🔥 TABLE
+        String[] columns = {"ID", "Name", "Issue", "Location", "Status", "Priority", "Resolved By"};
+        model = new DefaultTableModel(columns, 0);
+        table = new JTable(model);
 
-        if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(this, "Select a complaint first!");
-            return;
-        }
+        JScrollPane scrollPane = new JScrollPane(table);
+        add(scrollPane, BorderLayout.CENTER);
 
-        int id = (int) model.getValueAt(selectedRow, 0);
+        // 🔥 BOTTOM PANEL
+        JPanel bottomPanel = new JPanel();
 
-        String[] options = {"Pending", "In Progress", "Resolved"};
-        String newStatus = (String) JOptionPane.showInputDialog(
-                this,
-                "Select new status:",
-                "Update Status",
-                JOptionPane.QUESTION_MESSAGE,
-                null,
-                options,
-                options[0]
-        );
+        JButton updateBtn = new JButton("Update Status");
 
-        // Admin name input
-        String adminName = JOptionPane.showInputDialog("Enter your name:");
+        totalLabel = new JLabel("Total: 0");
+        pendingLabel = new JLabel("Pending: 0");
+        progressLabel = new JLabel("In Progress: 0");
+        resolvedLabel = new JLabel("Resolved: 0");
 
-        if (newStatus != null && adminName != null) {
-            try {
-                Connection con = DBConnection.getConnection();
+        bottomPanel.add(updateBtn);
+        bottomPanel.add(totalLabel);
+        bottomPanel.add(pendingLabel);
+        bottomPanel.add(progressLabel);
+        bottomPanel.add(resolvedLabel);
 
-                String query = "UPDATE complaints SET status=?, resolved_by=? WHERE id=?";
-                PreparedStatement ps = con.prepareStatement(query);
+        add(bottomPanel, BorderLayout.SOUTH);
 
-                ps.setString(1, newStatus);
-                ps.setString(2, adminName);
-                ps.setInt(3, id);
+        // 🔥 LOAD DATA
+        loadData("All");
 
-                ps.executeUpdate();
+        // 🔥 FILTER
+        allBtn.addActionListener(e -> loadData("All"));
+        pendingBtn.addActionListener(e -> loadData("Pending"));
+        progressBtn.addActionListener(e -> loadData("In Progress"));
+        resolvedBtn.addActionListener(e -> loadData("Resolved"));
 
-                JOptionPane.showMessageDialog(this, "Status Updated!");
+        // 🔥 SEARCH
+        searchBtn.addActionListener(e -> searchData(searchField.getText()));
 
-                model.setRowCount(0);
-                loadData();
+        // 🔥 UPDATE
+        updateBtn.addActionListener(e -> updateStatus());
 
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+        setVisible(true);
     }
 
-    // Load data from DB
-    public void loadData() {
+    public void loadData(String statusFilter) {
         try {
             Connection con = DBConnection.getConnection();
-            String query = "SELECT * FROM complaints";
-            Statement st = con.createStatement();
-            ResultSet rs = st.executeQuery(query);
 
-            model.setRowCount(0); // ADD THIS
+            String query = statusFilter.equals("All") ?
+                    "SELECT * FROM complaints" :
+                    "SELECT * FROM complaints WHERE status = ?";
+
+            PreparedStatement ps = con.prepareStatement(query);
+
+            if (!statusFilter.equals("All")) {
+                ps.setString(1, statusFilter);
+            }
+
+            ResultSet rs = ps.executeQuery();
+
+            model.setRowCount(0);
 
             while (rs.next()) {
-                int id = rs.getInt("id");
-                String name = rs.getString("name");
-                String issue = rs.getString("issue");
-                String location = rs.getString("location");
-                String status = rs.getString("status");
-
-                model.addRow(new Object[]{id, name, issue, location, status});
+                model.addRow(new Object[]{
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getString("issue"),
+                        rs.getString("location"),
+                        rs.getString("status"),
+                        rs.getString("priority"),
+                        rs.getString("resolved_by")
+                });
             }
+
+            updateStats();
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    // Update status logic
-    public void updateStatus() {
-        int selectedRow = table.getSelectedRow();
+    public void searchData(String keyword) {
+        try {
+            Connection con = DBConnection.getConnection();
 
-        if (selectedRow == -1) {
+            String query = "SELECT * FROM complaints WHERE name LIKE ? OR issue LIKE ?";
+            PreparedStatement ps = con.prepareStatement(query);
+
+            ps.setString(1, "%" + keyword + "%");
+            ps.setString(2, "%" + keyword + "%");
+
+            ResultSet rs = ps.executeQuery();
+
+            model.setRowCount(0);
+
+            while (rs.next()) {
+                model.addRow(new Object[]{
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getString("issue"),
+                        rs.getString("location"),
+                        rs.getString("status"),
+                        rs.getString("priority"),
+                        rs.getString("resolved_by")
+                });
+            }
+
+            updateStats();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateStatus() {
+
+        int row = table.getSelectedRow();
+
+        if (row == -1) {
             JOptionPane.showMessageDialog(this, "Select a complaint first!");
             return;
         }
 
-        int id = (int) model.getValueAt(selectedRow, 0);
+        int id = (int) model.getValueAt(row, 0);
 
         String[] options = {"Pending", "In Progress", "Resolved"};
-        String newStatus = (String) JOptionPane.showInputDialog(
-                this,
-                "Select new status:",
-                "Update Status",
-                JOptionPane.QUESTION_MESSAGE,
-                null,
-                options,
-                options[0]
-        );
+        String status = (String) JOptionPane.showInputDialog(
+                this, "Select status", "Update",
+                JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 
-        if (newStatus != null) {
+        String admin = JOptionPane.showInputDialog("Enter your name:");
+
+        if (status != null && admin != null) {
             try {
                 Connection con = DBConnection.getConnection();
-                String query = "UPDATE complaints SET status=? WHERE id=?";
+
+                String query = "UPDATE complaints SET status=?, resolved_by=? WHERE id=?";
                 PreparedStatement ps = con.prepareStatement(query);
 
-                ps.setString(1, newStatus);
-                ps.setInt(2, id);
+                ps.setString(1, status);
+                ps.setString(2, admin);
+                ps.setInt(3, id);
 
                 ps.executeUpdate();
 
-                JOptionPane.showMessageDialog(this, "Status Updated!");
-
-                model.setRowCount(0); // it will clear table
-                loadData(); // reload the page 
+                loadData("All");
 
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    public void updateStats() {
+
+        int total = model.getRowCount();
+        int pending = 0, progress = 0, resolved = 0;
+
+        for (int i = 0; i < total; i++) {
+            String status = model.getValueAt(i, 4).toString();
+
+            if (status.equals("Pending")) pending++;
+            else if (status.equals("In Progress")) progress++;
+            else if (status.equals("Resolved")) resolved++;
+        }
+
+        totalLabel.setText("Total: " + total);
+        pendingLabel.setText("Pending: " + pending);
+        progressLabel.setText("In Progress: " + progress);
+        resolvedLabel.setText("Resolved: " + resolved);
     }
 }

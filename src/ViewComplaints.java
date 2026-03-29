@@ -10,7 +10,6 @@ public class ViewComplaints {
 
         JPanel panel = new JPanel(new BorderLayout());
 
-        // TITLE
         JLabel title = new JLabel("My Complaints");
         title.setFont(new Font("Segoe UI", Font.BOLD, 22));
         title.setHorizontalAlignment(SwingConstants.CENTER);
@@ -18,7 +17,7 @@ public class ViewComplaints {
 
         panel.add(title, BorderLayout.NORTH);
 
-        // CARD CONTAINER
+        // MAIN PANEL FOR CARDS
         mainPanel = new JPanel();
         mainPanel.setLayout(new GridLayout(0, 2, 20, 20));
         mainPanel.setBackground(new Color(240, 244, 250));
@@ -29,9 +28,7 @@ public class ViewComplaints {
 
         panel.add(scrollPane, BorderLayout.CENTER);
 
-        // BACK BUTTON
         JButton backBtn = new JButton("← Back");
-        backBtn.setFocusPainted(false);
         backBtn.setBackground(new Color(58, 123, 213));
         backBtn.setForeground(Color.WHITE);
 
@@ -45,7 +42,7 @@ public class ViewComplaints {
         return panel;
     }
 
-    // CARD UI
+    // 🔥 CARD UI
     private static JPanel createCard(String issue, String location, String status, String priority, String resolved) {
 
         JPanel card = new JPanel();
@@ -56,55 +53,12 @@ public class ViewComplaints {
                 BorderFactory.createLineBorder(new Color(220, 220, 220)),
                 BorderFactory.createEmptyBorder(15, 15, 15, 15)
         ));
-        
-        
-        private static void showDetails(String issue, String location, String status, String priority, String resolved) {
 
-            JDialog dialog = new JDialog();
-            dialog.setTitle("Complaint Details");
-            dialog.setSize(350, 300);
-            dialog.setLocationRelativeTo(null);
-            dialog.setLayout(new BorderLayout());
-
-            JPanel panel = new JPanel();
-            panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-            panel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
-
-            JLabel issueLabel = new JLabel("Issue: " + issue);
-            JLabel locationLabel = new JLabel("Location: " + location);
-            JLabel statusLabel = new JLabel("Status: " + status);
-            JLabel priorityLabel = new JLabel("Priority: " + priority);
-            JLabel resolvedLabel = new JLabel("Resolved By: " + resolved);
-
-            issueLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
-
-            panel.add(issueLabel);
-            panel.add(Box.createRigidArea(new Dimension(0, 10)));
-            panel.add(locationLabel);
-            panel.add(statusLabel);
-            panel.add(priorityLabel);
-            panel.add(resolvedLabel);
-
-            JButton closeBtn = new JButton("Close");
-            closeBtn.addActionListener(e -> dialog.dispose());
-
-            JPanel bottom = new JPanel();
-            bottom.add(closeBtn);
-
-            dialog.add(panel, BorderLayout.CENTER);
-            dialog.add(bottom, BorderLayout.SOUTH);
-
-            dialog.setVisible(true);
-        }
-
-        // ISSUE TITLE
         JLabel issueLabel = new JLabel(issue);
         issueLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
 
-        // LOCATION
         JLabel locationLabel = new JLabel("📍 " + location);
 
-        // STATUS BADGE
         JLabel statusLabel = new JLabel(status);
         statusLabel.setOpaque(true);
         statusLabel.setForeground(Color.WHITE);
@@ -120,40 +74,73 @@ public class ViewComplaints {
             statusLabel.setBackground(Color.GRAY);
         }
 
-        // EXTRA INFO
         JLabel priorityLabel = new JLabel("Priority: " + priority);
         JLabel resolvedLabel = new JLabel("Resolved By: " + resolved);
 
-        // BUTTON
         JButton viewBtn = new JButton("View Details");
-        viewBtn.setFocusPainted(false);
         viewBtn.setBackground(new Color(0, 120, 215));
         viewBtn.setForeground(Color.WHITE);
-        
-        viewBtn.addActionListener(e -> 
-        showDetails(issue, location, status, priority, resolved)
-    );
 
-        // ADD COMPONENTS
+        // ✅ FIXED ACTION (NO ERROR)
+        viewBtn.addActionListener(e ->
+                showDetails(issue, location, status, priority, resolved)
+        );
+
         card.add(issueLabel);
         card.add(Box.createRigidArea(new Dimension(0, 10)));
-
         card.add(locationLabel);
         card.add(Box.createRigidArea(new Dimension(0, 10)));
-
         card.add(statusLabel);
         card.add(Box.createRigidArea(new Dimension(0, 10)));
-
         card.add(priorityLabel);
         card.add(resolvedLabel);
         card.add(Box.createRigidArea(new Dimension(0, 10)));
-
         card.add(viewBtn);
 
         return card;
     }
 
-    //  LOAD DATA FROM DB
+    // ✅ POPUP METHOD (IMPORTANT)
+    private static void showDetails(String issue, String location, String status, String priority, String resolved) {
+
+        JDialog dialog = new JDialog();
+        dialog.setTitle("Complaint Details");
+        dialog.setSize(350, 300);
+        dialog.setLocationRelativeTo(null);
+        dialog.setLayout(new BorderLayout());
+
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+
+        JLabel issueLabel = new JLabel("Issue: " + issue);
+        JLabel locationLabel = new JLabel("Location: " + location);
+        JLabel statusLabel = new JLabel("Status: " + status);
+        JLabel priorityLabel = new JLabel("Priority: " + priority);
+        JLabel resolvedLabel = new JLabel("Resolved By: " + resolved);
+
+        issueLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
+
+        panel.add(issueLabel);
+        panel.add(Box.createRigidArea(new Dimension(0, 10)));
+        panel.add(locationLabel);
+        panel.add(statusLabel);
+        panel.add(priorityLabel);
+        panel.add(resolvedLabel);
+
+        JButton closeBtn = new JButton("Close");
+        closeBtn.addActionListener(e -> dialog.dispose());
+
+        JPanel bottom = new JPanel();
+        bottom.add(closeBtn);
+
+        dialog.add(panel, BorderLayout.CENTER);
+        dialog.add(bottom, BorderLayout.SOUTH);
+
+        dialog.setVisible(true);
+    }
+
+    // 🔥 LOAD DATA
     public static void loadData(String userName) {
 
         if (mainPanel == null) return;
@@ -163,9 +150,9 @@ public class ViewComplaints {
         try {
             Connection con = DBConnection.getConnection();
 
-            String query = "SELECT * FROM complaints WHERE name LIKE ?";
+            String query = "SELECT * FROM complaints WHERE name = ?";
             PreparedStatement ps = con.prepareStatement(query);
-            ps.setString(1, "%" + userName.trim() + "%");
+            ps.setString(1, userName.trim());
 
             ResultSet rs = ps.executeQuery();
 

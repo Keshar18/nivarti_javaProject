@@ -17,7 +17,6 @@ public class ViewComplaints {
 
         panel.add(title, BorderLayout.NORTH);
 
-        // MAIN PANEL FOR CARDS
         mainPanel = new JPanel();
         mainPanel.setLayout(new GridLayout(0, 2, 20, 20));
         mainPanel.setBackground(new Color(240, 244, 250));
@@ -43,7 +42,9 @@ public class ViewComplaints {
     }
 
     // 🔥 CARD UI
-    private static JPanel createCard(String issue, String location, String status, String priority, String resolved) {
+    private static JPanel createCard(String issue, String location, String status,
+                                     String priority, String resolved,
+                                     String createdDate, String resolvedDate) {
 
         JPanel card = new JPanel();
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
@@ -77,13 +78,15 @@ public class ViewComplaints {
         JLabel priorityLabel = new JLabel("Priority: " + priority);
         JLabel resolvedLabel = new JLabel("Resolved By: " + resolved);
 
+        JLabel createdLabel = new JLabel("📅 Created: " + createdDate);
+        JLabel resolvedDateLabel = new JLabel("✅ Resolved On: " + resolvedDate);
+
         JButton viewBtn = new JButton("View Details");
         viewBtn.setBackground(new Color(0, 120, 215));
         viewBtn.setForeground(Color.WHITE);
 
-        // ✅ FIXED ACTION (NO ERROR)
         viewBtn.addActionListener(e ->
-                showDetails(issue, location, status, priority, resolved)
+                showDetails(issue, location, status, priority, resolved, createdDate, resolvedDate)
         );
 
         card.add(issueLabel);
@@ -95,17 +98,22 @@ public class ViewComplaints {
         card.add(priorityLabel);
         card.add(resolvedLabel);
         card.add(Box.createRigidArea(new Dimension(0, 10)));
+        card.add(createdLabel);
+        card.add(resolvedDateLabel);
+        card.add(Box.createRigidArea(new Dimension(0, 10)));
         card.add(viewBtn);
 
         return card;
     }
 
-    // ✅ POPUP METHOD (IMPORTANT)
-    private static void showDetails(String issue, String location, String status, String priority, String resolved) {
+    // 🔥 POPUP
+    private static void showDetails(String issue, String location, String status,
+                                    String priority, String resolved,
+                                    String createdDate, String resolvedDate) {
 
         JDialog dialog = new JDialog();
         dialog.setTitle("Complaint Details");
-        dialog.setSize(350, 300);
+        dialog.setSize(350, 320);
         dialog.setLocationRelativeTo(null);
         dialog.setLayout(new BorderLayout());
 
@@ -118,6 +126,8 @@ public class ViewComplaints {
         JLabel statusLabel = new JLabel("Status: " + status);
         JLabel priorityLabel = new JLabel("Priority: " + priority);
         JLabel resolvedLabel = new JLabel("Resolved By: " + resolved);
+        JLabel createdLabel = new JLabel("Created: " + createdDate);
+        JLabel resolvedDateLabel = new JLabel("Resolved On: " + resolvedDate);
 
         issueLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
 
@@ -127,6 +137,8 @@ public class ViewComplaints {
         panel.add(statusLabel);
         panel.add(priorityLabel);
         panel.add(resolvedLabel);
+        panel.add(createdLabel);
+        panel.add(resolvedDateLabel);
 
         JButton closeBtn = new JButton("Close");
         closeBtn.addActionListener(e -> dialog.dispose());
@@ -168,7 +180,15 @@ public class ViewComplaints {
                 String resolved = rs.getString("resolved_by");
                 if (resolved == null) resolved = "-";
 
-                JPanel card = createCard(issue, location, status, priority, resolved);
+                Timestamp createdAt = rs.getTimestamp("created_at");
+                Timestamp resolvedAt = rs.getTimestamp("resolved_at");
+
+                String createdDate = (createdAt != null) ? createdAt.toString() : "-";
+                String resolvedDate = (resolvedAt != null) ? resolvedAt.toString() : "-";
+
+                JPanel card = createCard(issue, location, status, priority,
+                        resolved, createdDate, resolvedDate);
+
                 mainPanel.add(card);
             }
 

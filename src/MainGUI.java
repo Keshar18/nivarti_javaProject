@@ -151,7 +151,7 @@ public class MainGUI {
                 String query = "INSERT INTO complaints(name, issue, location, status) VALUES (?, ?, ?, 'Pending')";
                 PreparedStatement ps = con.prepareStatement(query);
 
-                ps.setString(1, name);
+                ps.setString(1, name.trim().toLowerCase());
                 ps.setString(2, issue);
                 ps.setString(3, location);
 

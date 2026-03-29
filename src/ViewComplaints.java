@@ -150,9 +150,9 @@ public class ViewComplaints {
         try {
             Connection con = DBConnection.getConnection();
 
-            String query = "SELECT * FROM complaints WHERE name = ?";
+            String query = "SELECT * FROM complaints WHERE LOWER(name) LIKE ?";
             PreparedStatement ps = con.prepareStatement(query);
-            ps.setString(1, userName.trim());
+            ps.setString(1, "%" + userName.trim().toLowerCase() + "%");
 
             ResultSet rs = ps.executeQuery();
 

@@ -17,8 +17,7 @@ public class ViewComplaints {
 
         panel.add(title, BorderLayout.NORTH);
 
-        mainPanel = new JPanel();
-        mainPanel.setLayout(new GridLayout(0, 2, 20, 20));
+        mainPanel = new JPanel(new GridLayout(0, 2, 20, 20));
         mainPanel.setBackground(new Color(240, 244, 250));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
@@ -28,7 +27,6 @@ public class ViewComplaints {
         JButton backBtn = new JButton("← Back");
         backBtn.setBackground(new Color(58, 123, 213));
         backBtn.setForeground(Color.WHITE);
-
         backBtn.addActionListener(e -> cardLayout.show(parentPanel, "HOME"));
 
         JPanel bottom = new JPanel();
@@ -39,7 +37,6 @@ public class ViewComplaints {
         return panel;
     }
 
-    // 🔥 CARD UI
     private static JPanel createCard(int id, String issue, String location, String status,
                                      String priority, String resolved,
                                      String createdDate, String resolvedDate) {
@@ -63,15 +60,12 @@ public class ViewComplaints {
         statusLabel.setForeground(Color.WHITE);
         statusLabel.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
 
-        if (status.equalsIgnoreCase("Pending")) {
+        if (status.equalsIgnoreCase("Pending"))
             statusLabel.setBackground(new Color(255, 193, 7));
-        } else if (status.equalsIgnoreCase("In Progress")) {
+        else if (status.equalsIgnoreCase("In Progress"))
             statusLabel.setBackground(new Color(33, 150, 243));
-        } else if (status.equalsIgnoreCase("Resolved")) {
+        else
             statusLabel.setBackground(new Color(76, 175, 80));
-        } else {
-            statusLabel.setBackground(Color.GRAY);
-        }
 
         JLabel priorityLabel = new JLabel("Priority: " + priority);
         JLabel resolvedLabel = new JLabel("Resolved By: " + resolved);
@@ -92,21 +86,23 @@ public class ViewComplaints {
         deleteBtn.setBackground(new Color(244, 67, 54));
         deleteBtn.setForeground(Color.WHITE);
 
-        // 🔥 VIEW
+        viewBtn.setFocusPainted(false);
+        editBtn.setFocusPainted(false);
+        deleteBtn.setFocusPainted(false);
+
+        // VIEW
         viewBtn.addActionListener(e ->
                 showDetails(issue, location, status, priority, resolved, createdDate, resolvedDate)
         );
 
-        // 🔥 EDIT
+        // EDIT
         editBtn.addActionListener(e -> {
-
             String newIssue = JOptionPane.showInputDialog("Edit Issue:", issue);
             String newLocation = JOptionPane.showInputDialog("Edit Location:", location);
 
             if (newIssue != null && newLocation != null) {
                 try {
                     Connection con = DBConnection.getConnection();
-
                     String query = "UPDATE complaints SET issue=?, location=? WHERE id=?";
                     PreparedStatement ps = con.prepareStatement(query);
 
@@ -115,7 +111,6 @@ public class ViewComplaints {
                     ps.setInt(3, id);
 
                     ps.executeUpdate();
-
                     loadData(MainGUI.currentUser);
 
                 } catch (Exception ex) {
@@ -124,22 +119,19 @@ public class ViewComplaints {
             }
         });
 
-        // 🔥 DELETE
+        // DELETE
         deleteBtn.addActionListener(e -> {
-
             int confirm = JOptionPane.showConfirmDialog(null,
                     "Delete this complaint?", "Confirm", JOptionPane.YES_NO_OPTION);
 
             if (confirm == JOptionPane.YES_OPTION) {
                 try {
                     Connection con = DBConnection.getConnection();
-
                     String query = "DELETE FROM complaints WHERE id=?";
                     PreparedStatement ps = con.prepareStatement(query);
                     ps.setInt(1, id);
 
                     ps.executeUpdate();
-
                     loadData(MainGUI.currentUser);
 
                 } catch (Exception ex) {
@@ -148,7 +140,15 @@ public class ViewComplaints {
             }
         });
 
-        JPanel btnPanel = new JPanel();
+        // 🔥 CLEAN BUTTON LAYOUT (FIXED)
+        JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
+        btnPanel.setBackground(Color.WHITE);
+
+        viewBtn.setPreferredSize(new Dimension(110, 30));
+        editBtn.setPreferredSize(new Dimension(80, 30));
+        deleteBtn.setPreferredSize(new Dimension(80, 30));
+
+        btnPanel.add(viewBtn);
         btnPanel.add(editBtn);
         btnPanel.add(deleteBtn);
 
@@ -164,13 +164,11 @@ public class ViewComplaints {
         card.add(createdLabel);
         card.add(resolvedDateLabel);
         card.add(Box.createRigidArea(new Dimension(0, 10)));
-        card.add(viewBtn);
         card.add(btnPanel);
 
         return card;
     }
 
-    // 🔥 POPUP
     private static void showDetails(String issue, String location, String status,
                                     String priority, String resolved,
                                     String createdDate, String resolvedDate) {
@@ -179,7 +177,6 @@ public class ViewComplaints {
         dialog.setTitle("Complaint Details");
         dialog.setSize(350, 320);
         dialog.setLocationRelativeTo(null);
-        dialog.setLayout(new BorderLayout());
 
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
@@ -196,16 +193,12 @@ public class ViewComplaints {
         JButton closeBtn = new JButton("Close");
         closeBtn.addActionListener(e -> dialog.dispose());
 
-        JPanel bottom = new JPanel();
-        bottom.add(closeBtn);
-
         dialog.add(panel, BorderLayout.CENTER);
-        dialog.add(bottom, BorderLayout.SOUTH);
+        dialog.add(closeBtn, BorderLayout.SOUTH);
 
         dialog.setVisible(true);
     }
 
-    // 🔥 LOAD DATA
     public static void loadData(String userName) {
 
         if (mainPanel == null) return;
@@ -241,10 +234,8 @@ public class ViewComplaints {
                 String createdDate = (createdAt != null) ? createdAt.toString() : "-";
                 String resolvedDate = (resolvedAt != null) ? resolvedAt.toString() : "-";
 
-                JPanel card = createCard(id, issue, location, status,
-                        priority, resolved, createdDate, resolvedDate);
-
-                mainPanel.add(card);
+                mainPanel.add(createCard(id, issue, location, status,
+                        priority, resolved, createdDate, resolvedDate));
             }
 
             mainPanel.revalidate();

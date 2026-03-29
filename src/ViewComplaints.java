@@ -51,10 +51,10 @@ public class ViewComplaints {
                         rs.getString("issue"),
                         rs.getString("location"),
                         rs.getString("status"),
-                        rs.getString("priority"),
-                        rs.getString("resolved_by") == null ? "-" : rs.getString("resolved_by")
+                        rs.getString("priority") == null ? "-" : rs.getString("priority"),
+                        rs.getString("resolved_by") == null ? "-" : rs.getString("resolved_by"))
                 });
-            }
+            }m
 
         } catch (Exception e) {
             e.printStackTrace();

@@ -2,6 +2,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.sql.*;
+import javax.swing.table.DefaultTableCellRenderer;
 
 public class ViewComplaints {
 
@@ -21,9 +22,46 @@ public class ViewComplaints {
         model = new DefaultTableModel(columns, 0);
 
         JTable table = new JTable(model);
-        JScrollPane scrollPane = new JScrollPane(table);
+        table.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        table.setRowHeight(35);
 
+        // Header styling
+        table.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
+        table.getTableHeader().setBackground(new Color(58, 123, 213));
+        table.getTableHeader().setForeground(Color.WHITE);
+        
+        
+        JScrollPane scrollPane = new JScrollPane(table);
         panel.add(scrollPane, BorderLayout.CENTER);
+        
+        table.getColumnModel().getColumn(2).setCellRenderer(new DefaultTableCellRenderer() {
+
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value,
+                    boolean isSelected, boolean hasFocus, int row, int column) {
+
+                Component c = super.getTableCellRendererComponent(
+                        table, value, isSelected, hasFocus, row, column);
+
+                if (value == null) return c;
+
+                String status = value.toString();
+
+                c.setForeground(Color.WHITE);
+
+                if (status.equalsIgnoreCase("Pending")) {
+                    c.setBackground(new Color(255, 193, 7));
+                } else if (status.equalsIgnoreCase("In Progress")) {
+                    c.setBackground(new Color(33, 150, 243));
+                } else if (status.equalsIgnoreCase("Resolved")) {
+                    c.setBackground(new Color(76, 175, 80));
+                } else {
+                    c.setBackground(Color.GRAY);
+                }
+
+                return c;
+            }
+        });
 
         JButton backBtn = new JButton("Back");
         backBtn.addActionListener(e -> cardLayout.show(mainPanel, "HOME"));

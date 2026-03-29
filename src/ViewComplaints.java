@@ -23,8 +23,6 @@ public class ViewComplaints {
         mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         JScrollPane scrollPane = new JScrollPane(mainPanel);
-        scrollPane.setBorder(null);
-
         panel.add(scrollPane, BorderLayout.CENTER);
 
         JButton backBtn = new JButton("← Back");
@@ -42,7 +40,7 @@ public class ViewComplaints {
     }
 
     // 🔥 CARD UI
-    private static JPanel createCard(String issue, String location, String status,
+    private static JPanel createCard(int id, String issue, String location, String status,
                                      String priority, String resolved,
                                      String createdDate, String resolvedDate) {
 
@@ -82,12 +80,77 @@ public class ViewComplaints {
         JLabel resolvedDateLabel = new JLabel("✅ Resolved On: " + resolvedDate);
 
         JButton viewBtn = new JButton("View Details");
+        JButton editBtn = new JButton("Edit");
+        JButton deleteBtn = new JButton("Delete");
+
         viewBtn.setBackground(new Color(0, 120, 215));
         viewBtn.setForeground(Color.WHITE);
 
+        editBtn.setBackground(new Color(255, 152, 0));
+        editBtn.setForeground(Color.WHITE);
+
+        deleteBtn.setBackground(new Color(244, 67, 54));
+        deleteBtn.setForeground(Color.WHITE);
+
+        // 🔥 VIEW
         viewBtn.addActionListener(e ->
                 showDetails(issue, location, status, priority, resolved, createdDate, resolvedDate)
         );
+
+        // 🔥 EDIT
+        editBtn.addActionListener(e -> {
+
+            String newIssue = JOptionPane.showInputDialog("Edit Issue:", issue);
+            String newLocation = JOptionPane.showInputDialog("Edit Location:", location);
+
+            if (newIssue != null && newLocation != null) {
+                try {
+                    Connection con = DBConnection.getConnection();
+
+                    String query = "UPDATE complaints SET issue=?, location=? WHERE id=?";
+                    PreparedStatement ps = con.prepareStatement(query);
+
+                    ps.setString(1, newIssue);
+                    ps.setString(2, newLocation);
+                    ps.setInt(3, id);
+
+                    ps.executeUpdate();
+
+                    loadData(MainGUI.currentUser);
+
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+
+        // 🔥 DELETE
+        deleteBtn.addActionListener(e -> {
+
+            int confirm = JOptionPane.showConfirmDialog(null,
+                    "Delete this complaint?", "Confirm", JOptionPane.YES_NO_OPTION);
+
+            if (confirm == JOptionPane.YES_OPTION) {
+                try {
+                    Connection con = DBConnection.getConnection();
+
+                    String query = "DELETE FROM complaints WHERE id=?";
+                    PreparedStatement ps = con.prepareStatement(query);
+                    ps.setInt(1, id);
+
+                    ps.executeUpdate();
+
+                    loadData(MainGUI.currentUser);
+
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+
+        JPanel btnPanel = new JPanel();
+        btnPanel.add(editBtn);
+        btnPanel.add(deleteBtn);
 
         card.add(issueLabel);
         card.add(Box.createRigidArea(new Dimension(0, 10)));
@@ -102,6 +165,7 @@ public class ViewComplaints {
         card.add(resolvedDateLabel);
         card.add(Box.createRigidArea(new Dimension(0, 10)));
         card.add(viewBtn);
+        card.add(btnPanel);
 
         return card;
     }
@@ -121,24 +185,13 @@ public class ViewComplaints {
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
-        JLabel issueLabel = new JLabel("Issue: " + issue);
-        JLabel locationLabel = new JLabel("Location: " + location);
-        JLabel statusLabel = new JLabel("Status: " + status);
-        JLabel priorityLabel = new JLabel("Priority: " + priority);
-        JLabel resolvedLabel = new JLabel("Resolved By: " + resolved);
-        JLabel createdLabel = new JLabel("Created: " + createdDate);
-        JLabel resolvedDateLabel = new JLabel("Resolved On: " + resolvedDate);
-
-        issueLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
-
-        panel.add(issueLabel);
-        panel.add(Box.createRigidArea(new Dimension(0, 10)));
-        panel.add(locationLabel);
-        panel.add(statusLabel);
-        panel.add(priorityLabel);
-        panel.add(resolvedLabel);
-        panel.add(createdLabel);
-        panel.add(resolvedDateLabel);
+        panel.add(new JLabel("Issue: " + issue));
+        panel.add(new JLabel("Location: " + location));
+        panel.add(new JLabel("Status: " + status));
+        panel.add(new JLabel("Priority: " + priority));
+        panel.add(new JLabel("Resolved By: " + resolved));
+        panel.add(new JLabel("Created: " + createdDate));
+        panel.add(new JLabel("Resolved On: " + resolvedDate));
 
         JButton closeBtn = new JButton("Close");
         closeBtn.addActionListener(e -> dialog.dispose());
@@ -170,6 +223,8 @@ public class ViewComplaints {
 
             while (rs.next()) {
 
+                int id = rs.getInt("id");
+
                 String issue = rs.getString("issue");
                 String location = rs.getString("location");
                 String status = rs.getString("status");
@@ -186,8 +241,8 @@ public class ViewComplaints {
                 String createdDate = (createdAt != null) ? createdAt.toString() : "-";
                 String resolvedDate = (resolvedAt != null) ? resolvedAt.toString() : "-";
 
-                JPanel card = createCard(issue, location, status, priority,
-                        resolved, createdDate, resolvedDate);
+                JPanel card = createCard(id, issue, location, status,
+                        priority, resolved, createdDate, resolvedDate);
 
                 mainPanel.add(card);
             }

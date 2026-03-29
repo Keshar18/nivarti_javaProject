@@ -6,7 +6,7 @@ import java.sql.*;
 
 public class MainGUI {
 
-    static String currentUser = ""; // ✅ NEW
+    static String currentUser = ""; // NEW
 
     public static void main(String[] args) {
 
@@ -131,6 +131,9 @@ public class MainGUI {
             String name = nameField.getText();
             String issue = issueField.getText();
             String location = locationField.getText();
+            
+            // IMPORTANT FIX
+            currentUser = name;
 
             if(name.isEmpty() || issue.isEmpty() || location.isEmpty()) {
                 JOptionPane.showMessageDialog(null, "Please fill all fields!");

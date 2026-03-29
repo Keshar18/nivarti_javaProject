@@ -35,29 +35,47 @@ public class ViewComplaints {
 
     public static void loadData(String userName) {
 
+        if(model == null) return;
+
         model.setRowCount(0);
 
         try {
             Connection con = DBConnection.getConnection();
 
-            String query = "SELECT * FROM complaints WHERE name = ?";
+            String query = "SELECT * FROM complaints WHERE name LIKE ?";
+
             PreparedStatement ps = con.prepareStatement(query);
-            ps.setString(1, userName);
+
+            ps.setString(1, "%" + userName.trim() + "%");
 
             ResultSet rs = ps.executeQuery();
+           
 
             while (rs.next()) {
+
+                String issue = rs.getString("issue");
+                String location = rs.getString("location");
+                String status = rs.getString("status");
+
+                // 🔥 SAFE NULL HANDLING
+                String priority = rs.getString("priority");
+                if(priority == null) priority = "Low";
+
+                String resolved = rs.getString("resolved_by");
+                if(resolved == null) resolved = "-";
+
                 model.addRow(new Object[]{
-                        rs.getString("issue"),
-                        rs.getString("location"),
-                        rs.getString("status"),
-                        rs.getString("priority") == null ? "-" : rs.getString("priority"),
-                        rs.getString("resolved_by") == null ? "-" : rs.getString("resolved_by"))
+                    issue,
+                    location,
+                    status,
+                    priority,
+                    resolved
                 });
-            }m
+            }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace(); // 🔥 IMPORTANT (error dikhega)
         }
     }
+    
 }

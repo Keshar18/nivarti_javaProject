@@ -76,7 +76,7 @@ public class ViewComplaints {
         card.setBackground(Color.WHITE);
 
         //  IMPORTANT SIZE FIX
-        card.setPreferredSize(new Dimension(280, 170));
+        card.setPreferredSize(new Dimension(280, 190));
 
         card.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(220, 220, 220)),

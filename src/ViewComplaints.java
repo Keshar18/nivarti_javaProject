@@ -18,7 +18,7 @@ public class ViewComplaints {
 
         panel.add(title, BorderLayout.NORTH);
 
-        //  TOP PANEL (SEARCH + FILTER)
+        // TOP PANEL
         JPanel topPanel = new JPanel();
 
         searchField = new JTextField(15);
@@ -37,20 +37,21 @@ public class ViewComplaints {
 
         panel.add(topPanel, BorderLayout.BEFORE_FIRST_LINE);
 
-        // CARD PANEL
-        mainPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 20));
+        // MAIN PANEL (FIXED)
+        mainPanel = new JPanel(new GridLayout(0, 2, 20, 20));
         mainPanel.setBackground(new Color(240, 244, 250));
 
         JScrollPane scrollPane = new JScrollPane(mainPanel);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         panel.add(scrollPane, BorderLayout.CENTER);
 
         //  BACK
         JButton backBtn = new JButton("← Back");
         backBtn.addActionListener(e -> cardLayout.show(parentPanel, "HOME"));
-
         panel.add(backBtn, BorderLayout.SOUTH);
 
-        // ACTIONS
+        //  ACTIONS
         searchField.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent e) {
                 loadData(MainGUI.currentUser);
@@ -65,7 +66,7 @@ public class ViewComplaints {
         return panel;
     }
 
-    //  CARD UI (UNCHANGED)
+    // CARD
     private static JPanel createCard(int id, String issue, String location, String status,
                                      String priority, String resolved,
                                      String createdDate, String resolvedDate) {
@@ -73,8 +74,14 @@ public class ViewComplaints {
         JPanel card = new JPanel();
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
         card.setBackground(Color.WHITE);
-        card.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
-        card.setPreferredSize(new Dimension(300, card.getPreferredSize().height));
+
+        //  IMPORTANT SIZE FIX
+        card.setPreferredSize(new Dimension(280, 180));
+
+        card.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(220, 220, 220)),
+                BorderFactory.createEmptyBorder(15, 15, 15, 15)
+        ));
 
         JLabel issueLabel = new JLabel(issue);
         issueLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
@@ -86,14 +93,15 @@ public class ViewComplaints {
         statusLabel.setForeground(Color.WHITE);
 
         if (status.equalsIgnoreCase("Pending"))
-            statusLabel.setBackground(Color.ORANGE);
-        else if (status.equalsIgnoreCase("Resolved"))
-            statusLabel.setBackground(Color.GREEN);
+            statusLabel.setBackground(new Color(255, 193, 7));
+        else if (status.equalsIgnoreCase("In Progress"))
+            statusLabel.setBackground(new Color(33, 150, 243));
         else
-            statusLabel.setBackground(Color.BLUE);
+            statusLabel.setBackground(new Color(76, 175, 80));
 
         JLabel priorityLabel = new JLabel("Priority: " + priority);
         JLabel resolvedLabel = new JLabel("Resolved By: " + resolved);
+
         JLabel createdLabel = new JLabel("📅 Created: " + createdDate);
         JLabel resolvedDateLabel = new JLabel("✅ Resolved On: " + resolvedDate);
 
@@ -101,12 +109,29 @@ public class ViewComplaints {
         JButton editBtn = new JButton("Edit");
         JButton deleteBtn = new JButton("Delete");
 
+        //  BUTTON STYLE
+        Dimension btnSize = new Dimension(100, 30);
+
+        viewBtn.setPreferredSize(btnSize);
+        editBtn.setPreferredSize(btnSize);
+        deleteBtn.setPreferredSize(btnSize);
+
+        viewBtn.setBackground(new Color(33,150,243));
+        editBtn.setBackground(new Color(255,152,0));
+        deleteBtn.setBackground(new Color(244,67,54));
+
+        viewBtn.setForeground(Color.WHITE);
+        editBtn.setForeground(Color.WHITE);
+        deleteBtn.setForeground(Color.WHITE);
+
+        viewBtn.setFocusPainted(false);
+        editBtn.setFocusPainted(false);
+        deleteBtn.setFocusPainted(false);
+
         // VIEW
         viewBtn.addActionListener(e ->
                 JOptionPane.showMessageDialog(null,
-                        "Issue: " + issue +
-                        "\nLocation: " + location +
-                        "\nStatus: " + status));
+                        "Issue: " + issue + "\nLocation: " + location));
 
         // EDIT
         editBtn.addActionListener(e -> {
@@ -144,46 +169,13 @@ public class ViewComplaints {
             }
         });
 
-     //  CLEAN BUTTON PANEL
-        JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 12, 8));
+        JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
         btnPanel.setBackground(Color.WHITE);
 
-        // SAME HEIGHT BUTTONS
-        Dimension btnSize = new Dimension(110, 32);
-
-        viewBtn.setPreferredSize(btnSize);
-        editBtn.setPreferredSize(btnSize);
-        deleteBtn.setPreferredSize(btnSize);
-
-        // COLORS (clean look)
-        viewBtn.setBackground(new Color(33, 150, 243));   // blue
-        editBtn.setBackground(new Color(255, 152, 0));    // orange
-        deleteBtn.setBackground(new Color(244, 67, 54));  // red
-
-        viewBtn.setForeground(Color.WHITE);
-        editBtn.setForeground(Color.WHITE);
-        deleteBtn.setForeground(Color.WHITE);
-
-        // remove ugly border look
-        viewBtn.setFocusPainted(false);
-        editBtn.setFocusPainted(false);
-        deleteBtn.setFocusPainted(false);
-
-        // ADD BUTTONS
         btnPanel.add(viewBtn);
         btnPanel.add(editBtn);
         btnPanel.add(deleteBtn);
 
-        // spacing before buttons
-        card.add(Box.createRigidArea(new Dimension(0, 12)));
-        card.add(btnPanel);
-        
-        
-        viewBtn.setBorder(BorderFactory.createEmptyBorder());
-        editBtn.setBorder(BorderFactory.createEmptyBorder());
-        deleteBtn.setBorder(BorderFactory.createEmptyBorder());
-        
-        
         card.add(issueLabel);
         card.add(locationLabel);
         card.add(statusLabel);
@@ -191,13 +183,16 @@ public class ViewComplaints {
         card.add(resolvedLabel);
         card.add(createdLabel);
         card.add(resolvedDateLabel);
+        card.add(Box.createRigidArea(new Dimension(0, 10)));
         card.add(btnPanel);
 
         return card;
     }
 
-    //  LOAD DATA (FILTER APPLIED)
+    //  LOAD DATA
     public static void loadData(String userName) {
+
+        if (mainPanel == null) return;
 
         mainPanel.removeAll();
 
@@ -218,18 +213,14 @@ public class ViewComplaints {
                 String location = rs.getString("location");
                 String status = rs.getString("status");
 
-                //  SEARCH FILTER
                 if (!search.isEmpty() &&
                         !(issue.toLowerCase().contains(search) ||
-                          location.toLowerCase().contains(search))) {
+                          location.toLowerCase().contains(search)))
                     continue;
-                }
 
-                //  STATUS FILTER
                 if (!currentFilter.equals("All") &&
-                        !status.equalsIgnoreCase(currentFilter)) {
+                        !status.equalsIgnoreCase(currentFilter))
                     continue;
-                }
 
                 mainPanel.add(createCard(
                         rs.getInt("id"),

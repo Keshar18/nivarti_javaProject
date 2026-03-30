@@ -18,7 +18,7 @@ public class ViewComplaints {
 
         panel.add(title, BorderLayout.NORTH);
 
-        // 🔥 TOP PANEL (SEARCH + FILTER)
+        //  TOP PANEL (SEARCH + FILTER)
         JPanel topPanel = new JPanel();
 
         searchField = new JTextField(15);
@@ -37,20 +37,20 @@ public class ViewComplaints {
 
         panel.add(topPanel, BorderLayout.BEFORE_FIRST_LINE);
 
-        // 🔥 CARD PANEL
-        mainPanel = new JPanel(new GridLayout(0, 2, 20, 20));
+        // CARD PANEL
+        mainPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 20));
         mainPanel.setBackground(new Color(240, 244, 250));
 
         JScrollPane scrollPane = new JScrollPane(mainPanel);
         panel.add(scrollPane, BorderLayout.CENTER);
 
-        // 🔙 BACK
+        //  BACK
         JButton backBtn = new JButton("← Back");
         backBtn.addActionListener(e -> cardLayout.show(parentPanel, "HOME"));
 
         panel.add(backBtn, BorderLayout.SOUTH);
 
-        // 🔥 ACTIONS
+        // ACTIONS
         searchField.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent e) {
                 loadData(MainGUI.currentUser);
@@ -65,7 +65,7 @@ public class ViewComplaints {
         return panel;
     }
 
-    // 🔥 CARD UI (UNCHANGED)
+    //  CARD UI (UNCHANGED)
     private static JPanel createCard(int id, String issue, String location, String status,
                                      String priority, String resolved,
                                      String createdDate, String resolvedDate) {
@@ -74,6 +74,7 @@ public class ViewComplaints {
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
         card.setBackground(Color.WHITE);
         card.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+        card.setPreferredSize(new Dimension(300, card.getPreferredSize().height));
 
         JLabel issueLabel = new JLabel(issue);
         issueLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
@@ -143,7 +144,7 @@ public class ViewComplaints {
             }
         });
 
-     // 🔥 CLEAN BUTTON PANEL
+     //  CLEAN BUTTON PANEL
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 12, 8));
         btnPanel.setBackground(Color.WHITE);
 
@@ -195,7 +196,7 @@ public class ViewComplaints {
         return card;
     }
 
-    // 🔥 LOAD DATA (FILTER APPLIED)
+    //  LOAD DATA (FILTER APPLIED)
     public static void loadData(String userName) {
 
         mainPanel.removeAll();
@@ -217,14 +218,14 @@ public class ViewComplaints {
                 String location = rs.getString("location");
                 String status = rs.getString("status");
 
-                // 🔍 SEARCH FILTER
+                //  SEARCH FILTER
                 if (!search.isEmpty() &&
                         !(issue.toLowerCase().contains(search) ||
                           location.toLowerCase().contains(search))) {
                     continue;
                 }
 
-                // 🎯 STATUS FILTER
+                //  STATUS FILTER
                 if (!currentFilter.equals("All") &&
                         !status.equalsIgnoreCase(currentFilter)) {
                     continue;

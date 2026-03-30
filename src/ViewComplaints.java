@@ -18,29 +18,26 @@ public class ViewComplaints {
 
         panel.add(title, BorderLayout.NORTH);
 
-        // 🔍 TOP PANEL (SEARCH + FILTER)
+        // 🔥 TOP PANEL (SEARCH + FILTER)
         JPanel topPanel = new JPanel();
 
         searchField = new JTextField(15);
-        JButton searchBtn = new JButton("Search");
 
         JButton allBtn = new JButton("All");
         JButton pendingBtn = new JButton("Pending");
         JButton progressBtn = new JButton("In Progress");
         JButton resolvedBtn = new JButton("Resolved");
 
-        topPanel.add(new JLabel("🔍"));
+        topPanel.add(new JLabel("Search:"));
         topPanel.add(searchField);
-        topPanel.add(searchBtn);
-
         topPanel.add(allBtn);
         topPanel.add(pendingBtn);
         topPanel.add(progressBtn);
         topPanel.add(resolvedBtn);
 
-        panel.add(topPanel, BorderLayout.SOUTH);
+        panel.add(topPanel, BorderLayout.BEFORE_FIRST_LINE);
 
-        // 🧾 MAIN PANEL
+        // 🔥 CARD PANEL
         mainPanel = new JPanel(new GridLayout(0, 2, 20, 20));
         mainPanel.setBackground(new Color(240, 244, 250));
 
@@ -50,11 +47,10 @@ public class ViewComplaints {
         // 🔙 BACK
         JButton backBtn = new JButton("← Back");
         backBtn.addActionListener(e -> cardLayout.show(parentPanel, "HOME"));
-        panel.add(backBtn, BorderLayout.PAGE_END);
+
+        panel.add(backBtn, BorderLayout.SOUTH);
 
         // 🔥 ACTIONS
-        searchBtn.addActionListener(e -> loadData(MainGUI.currentUser));
-
         searchField.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent e) {
                 loadData(MainGUI.currentUser);
@@ -69,7 +65,10 @@ public class ViewComplaints {
         return panel;
     }
 
-    private static JPanel createCard(String issue, String location, String status) {
+    // 🔥 CARD UI (UNCHANGED)
+    private static JPanel createCard(int id, String issue, String location, String status,
+                                     String priority, String resolved,
+                                     String createdDate, String resolvedDate) {
 
         JPanel card = new JPanel();
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
@@ -92,39 +91,101 @@ public class ViewComplaints {
         else
             statusLabel.setBackground(Color.BLUE);
 
+        JLabel priorityLabel = new JLabel("Priority: " + priority);
+        JLabel resolvedLabel = new JLabel("Resolved By: " + resolved);
+        JLabel createdLabel = new JLabel("📅 Created: " + createdDate);
+        JLabel resolvedDateLabel = new JLabel("✅ Resolved On: " + resolvedDate);
+
+        JButton viewBtn = new JButton("View Details");
+        JButton editBtn = new JButton("Edit");
+        JButton deleteBtn = new JButton("Delete");
+
+        // VIEW
+        viewBtn.addActionListener(e ->
+                JOptionPane.showMessageDialog(null,
+                        "Issue: " + issue +
+                        "\nLocation: " + location +
+                        "\nStatus: " + status));
+
+        // EDIT
+        editBtn.addActionListener(e -> {
+            try {
+                Connection con = DBConnection.getConnection();
+                PreparedStatement ps = con.prepareStatement(
+                        "UPDATE complaints SET issue=?, location=? WHERE id=?");
+
+                ps.setString(1, issue);
+                ps.setString(2, location);
+                ps.setInt(3, id);
+
+                ps.executeUpdate();
+                loadData(MainGUI.currentUser);
+
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
+
+        // DELETE
+        deleteBtn.addActionListener(e -> {
+            try {
+                Connection con = DBConnection.getConnection();
+                PreparedStatement ps = con.prepareStatement(
+                        "DELETE FROM complaints WHERE id=?");
+
+                ps.setInt(1, id);
+                ps.executeUpdate();
+
+                loadData(MainGUI.currentUser);
+
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
+
+        JPanel btnPanel = new JPanel();
+        btnPanel.add(viewBtn);
+        btnPanel.add(editBtn);
+        btnPanel.add(deleteBtn);
+
         card.add(issueLabel);
         card.add(locationLabel);
         card.add(statusLabel);
+        card.add(priorityLabel);
+        card.add(resolvedLabel);
+        card.add(createdLabel);
+        card.add(resolvedDateLabel);
+        card.add(btnPanel);
 
         return card;
     }
 
+    // 🔥 LOAD DATA (FILTER APPLIED)
     public static void loadData(String userName) {
-
-        if (mainPanel == null) return;
 
         mainPanel.removeAll();
 
         try {
             Connection con = DBConnection.getConnection();
 
-            String search = searchField.getText().trim().toLowerCase();
+            String search = searchField.getText().toLowerCase();
 
-            String query = "SELECT * FROM complaints WHERE LOWER(name) LIKE ?";
-            PreparedStatement ps = con.prepareStatement(query);
+            PreparedStatement ps = con.prepareStatement(
+                    "SELECT * FROM complaints WHERE LOWER(name) LIKE ?");
             ps.setString(1, "%" + userName.toLowerCase() + "%");
 
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
 
-                String issue = rs.getString("issue").toLowerCase();
-                String location = rs.getString("location").toLowerCase();
+                String issue = rs.getString("issue");
+                String location = rs.getString("location");
                 String status = rs.getString("status");
 
                 // 🔍 SEARCH FILTER
                 if (!search.isEmpty() &&
-                        !(issue.contains(search) || location.contains(search))) {
+                        !(issue.toLowerCase().contains(search) ||
+                          location.toLowerCase().contains(search))) {
                     continue;
                 }
 
@@ -134,7 +195,16 @@ public class ViewComplaints {
                     continue;
                 }
 
-                mainPanel.add(createCard(issue, location, status));
+                mainPanel.add(createCard(
+                        rs.getInt("id"),
+                        issue,
+                        location,
+                        status,
+                        rs.getString("priority"),
+                        rs.getString("resolved_by"),
+                        String.valueOf(rs.getTimestamp("created_at")),
+                        String.valueOf(rs.getTimestamp("resolved_at"))
+                ));
             }
 
             mainPanel.revalidate();

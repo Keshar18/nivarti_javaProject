@@ -143,11 +143,46 @@ public class ViewComplaints {
             }
         });
 
-        JPanel btnPanel = new JPanel();
+     // 🔥 CLEAN BUTTON PANEL
+        JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 12, 8));
+        btnPanel.setBackground(Color.WHITE);
+
+        // SAME HEIGHT BUTTONS
+        Dimension btnSize = new Dimension(110, 32);
+
+        viewBtn.setPreferredSize(btnSize);
+        editBtn.setPreferredSize(btnSize);
+        deleteBtn.setPreferredSize(btnSize);
+
+        // COLORS (clean look)
+        viewBtn.setBackground(new Color(33, 150, 243));   // blue
+        editBtn.setBackground(new Color(255, 152, 0));    // orange
+        deleteBtn.setBackground(new Color(244, 67, 54));  // red
+
+        viewBtn.setForeground(Color.WHITE);
+        editBtn.setForeground(Color.WHITE);
+        deleteBtn.setForeground(Color.WHITE);
+
+        // remove ugly border look
+        viewBtn.setFocusPainted(false);
+        editBtn.setFocusPainted(false);
+        deleteBtn.setFocusPainted(false);
+
+        // ADD BUTTONS
         btnPanel.add(viewBtn);
         btnPanel.add(editBtn);
         btnPanel.add(deleteBtn);
 
+        // spacing before buttons
+        card.add(Box.createRigidArea(new Dimension(0, 12)));
+        card.add(btnPanel);
+        
+        
+        viewBtn.setBorder(BorderFactory.createEmptyBorder());
+        editBtn.setBorder(BorderFactory.createEmptyBorder());
+        deleteBtn.setBorder(BorderFactory.createEmptyBorder());
+        
+        
         card.add(issueLabel);
         card.add(locationLabel);
         card.add(statusLabel);

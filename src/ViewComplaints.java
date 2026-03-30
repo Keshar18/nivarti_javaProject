@@ -5,6 +5,8 @@ import java.sql.*;
 public class ViewComplaints {
 
     static JPanel mainPanel;
+    static JTextField searchField;
+    static String currentFilter = "All";
 
     public static JPanel createPanel(CardLayout cardLayout, JPanel parentPanel) {
 
@@ -13,42 +15,66 @@ public class ViewComplaints {
         JLabel title = new JLabel("My Complaints");
         title.setFont(new Font("Segoe UI", Font.BOLD, 22));
         title.setHorizontalAlignment(SwingConstants.CENTER);
-        title.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
 
         panel.add(title, BorderLayout.NORTH);
 
+        // 🔍 TOP PANEL (SEARCH + FILTER)
+        JPanel topPanel = new JPanel();
+
+        searchField = new JTextField(15);
+        JButton searchBtn = new JButton("Search");
+
+        JButton allBtn = new JButton("All");
+        JButton pendingBtn = new JButton("Pending");
+        JButton progressBtn = new JButton("In Progress");
+        JButton resolvedBtn = new JButton("Resolved");
+
+        topPanel.add(new JLabel("🔍"));
+        topPanel.add(searchField);
+        topPanel.add(searchBtn);
+
+        topPanel.add(allBtn);
+        topPanel.add(pendingBtn);
+        topPanel.add(progressBtn);
+        topPanel.add(resolvedBtn);
+
+        panel.add(topPanel, BorderLayout.SOUTH);
+
+        // 🧾 MAIN PANEL
         mainPanel = new JPanel(new GridLayout(0, 2, 20, 20));
         mainPanel.setBackground(new Color(240, 244, 250));
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         JScrollPane scrollPane = new JScrollPane(mainPanel);
         panel.add(scrollPane, BorderLayout.CENTER);
 
+        // 🔙 BACK
         JButton backBtn = new JButton("← Back");
-        backBtn.setBackground(new Color(58, 123, 213));
-        backBtn.setForeground(Color.WHITE);
         backBtn.addActionListener(e -> cardLayout.show(parentPanel, "HOME"));
+        panel.add(backBtn, BorderLayout.PAGE_END);
 
-        JPanel bottom = new JPanel();
-        bottom.add(backBtn);
+        // 🔥 ACTIONS
+        searchBtn.addActionListener(e -> loadData(MainGUI.currentUser));
 
-        panel.add(bottom, BorderLayout.SOUTH);
+        searchField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent e) {
+                loadData(MainGUI.currentUser);
+            }
+        });
+
+        allBtn.addActionListener(e -> { currentFilter = "All"; loadData(MainGUI.currentUser); });
+        pendingBtn.addActionListener(e -> { currentFilter = "Pending"; loadData(MainGUI.currentUser); });
+        progressBtn.addActionListener(e -> { currentFilter = "In Progress"; loadData(MainGUI.currentUser); });
+        resolvedBtn.addActionListener(e -> { currentFilter = "Resolved"; loadData(MainGUI.currentUser); });
 
         return panel;
     }
 
-    private static JPanel createCard(int id, String issue, String location, String status,
-                                     String priority, String resolved,
-                                     String createdDate, String resolvedDate) {
+    private static JPanel createCard(String issue, String location, String status) {
 
         JPanel card = new JPanel();
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
         card.setBackground(Color.WHITE);
-
-        card.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(220, 220, 220)),
-                BorderFactory.createEmptyBorder(15, 15, 15, 15)
-        ));
+        card.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
         JLabel issueLabel = new JLabel(issue);
         issueLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
@@ -58,145 +84,19 @@ public class ViewComplaints {
         JLabel statusLabel = new JLabel(status);
         statusLabel.setOpaque(true);
         statusLabel.setForeground(Color.WHITE);
-        statusLabel.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
 
         if (status.equalsIgnoreCase("Pending"))
-            statusLabel.setBackground(new Color(255, 193, 7));
-        else if (status.equalsIgnoreCase("In Progress"))
-            statusLabel.setBackground(new Color(33, 150, 243));
+            statusLabel.setBackground(Color.ORANGE);
+        else if (status.equalsIgnoreCase("Resolved"))
+            statusLabel.setBackground(Color.GREEN);
         else
-            statusLabel.setBackground(new Color(76, 175, 80));
-
-        JLabel priorityLabel = new JLabel("Priority: " + priority);
-        JLabel resolvedLabel = new JLabel("Resolved By: " + resolved);
-
-        JLabel createdLabel = new JLabel("📅 Created: " + createdDate);
-        JLabel resolvedDateLabel = new JLabel("✅ Resolved On: " + resolvedDate);
-
-        JButton viewBtn = new JButton("View Details");
-        JButton editBtn = new JButton("Edit");
-        JButton deleteBtn = new JButton("Delete");
-
-        viewBtn.setBackground(new Color(0, 120, 215));
-        viewBtn.setForeground(Color.WHITE);
-
-        editBtn.setBackground(new Color(255, 152, 0));
-        editBtn.setForeground(Color.WHITE);
-
-        deleteBtn.setBackground(new Color(244, 67, 54));
-        deleteBtn.setForeground(Color.WHITE);
-
-        viewBtn.setFocusPainted(false);
-        editBtn.setFocusPainted(false);
-        deleteBtn.setFocusPainted(false);
-
-        // VIEW
-        viewBtn.addActionListener(e ->
-                showDetails(issue, location, status, priority, resolved, createdDate, resolvedDate)
-        );
-
-        // EDIT
-        editBtn.addActionListener(e -> {
-            String newIssue = JOptionPane.showInputDialog("Edit Issue:", issue);
-            String newLocation = JOptionPane.showInputDialog("Edit Location:", location);
-
-            if (newIssue != null && newLocation != null) {
-                try {
-                    Connection con = DBConnection.getConnection();
-                    String query = "UPDATE complaints SET issue=?, location=? WHERE id=?";
-                    PreparedStatement ps = con.prepareStatement(query);
-
-                    ps.setString(1, newIssue);
-                    ps.setString(2, newLocation);
-                    ps.setInt(3, id);
-
-                    ps.executeUpdate();
-                    loadData(MainGUI.currentUser);
-
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-            }
-        });
-
-        // DELETE
-        deleteBtn.addActionListener(e -> {
-            int confirm = JOptionPane.showConfirmDialog(null,
-                    "Delete this complaint?", "Confirm", JOptionPane.YES_NO_OPTION);
-
-            if (confirm == JOptionPane.YES_OPTION) {
-                try {
-                    Connection con = DBConnection.getConnection();
-                    String query = "DELETE FROM complaints WHERE id=?";
-                    PreparedStatement ps = con.prepareStatement(query);
-                    ps.setInt(1, id);
-
-                    ps.executeUpdate();
-                    loadData(MainGUI.currentUser);
-
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-            }
-        });
-
-        // 🔥 CLEAN BUTTON LAYOUT (FIXED)
-        JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
-        btnPanel.setBackground(Color.WHITE);
-
-        viewBtn.setPreferredSize(new Dimension(110, 30));
-        editBtn.setPreferredSize(new Dimension(80, 30));
-        deleteBtn.setPreferredSize(new Dimension(80, 30));
-
-        btnPanel.add(viewBtn);
-        btnPanel.add(editBtn);
-        btnPanel.add(deleteBtn);
+            statusLabel.setBackground(Color.BLUE);
 
         card.add(issueLabel);
-        card.add(Box.createRigidArea(new Dimension(0, 10)));
         card.add(locationLabel);
-        card.add(Box.createRigidArea(new Dimension(0, 10)));
         card.add(statusLabel);
-        card.add(Box.createRigidArea(new Dimension(0, 10)));
-        card.add(priorityLabel);
-        card.add(resolvedLabel);
-        card.add(Box.createRigidArea(new Dimension(0, 10)));
-        card.add(createdLabel);
-        card.add(resolvedDateLabel);
-        card.add(Box.createRigidArea(new Dimension(0, 10)));
-        card.add(btnPanel);
 
         return card;
-    }
-
-    private static void showDetails(String issue, String location, String status,
-                                    String priority, String resolved,
-                                    String createdDate, String resolvedDate) {
-
-        JDialog dialog = new JDialog();
-        dialog.setTitle("Complaint Details");
-        dialog.setSize(350, 320);
-        dialog.setLocationRelativeTo(null);
-
-        JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
-
-        panel.add(new JLabel("Issue: " + issue));
-        panel.add(new JLabel("Location: " + location));
-        panel.add(new JLabel("Status: " + status));
-        panel.add(new JLabel("Priority: " + priority));
-        panel.add(new JLabel("Resolved By: " + resolved));
-        panel.add(new JLabel("Created: " + createdDate));
-        panel.add(new JLabel("Resolved On: " + resolvedDate));
-
-        JButton closeBtn = new JButton("Close");
-        closeBtn.addActionListener(e -> dialog.dispose());
-
-        dialog.add(panel, BorderLayout.CENTER);
-        dialog.add(closeBtn, BorderLayout.SOUTH);
-
-        dialog.setVisible(true);
     }
 
     public static void loadData(String userName) {
@@ -208,34 +108,33 @@ public class ViewComplaints {
         try {
             Connection con = DBConnection.getConnection();
 
+            String search = searchField.getText().trim().toLowerCase();
+
             String query = "SELECT * FROM complaints WHERE LOWER(name) LIKE ?";
             PreparedStatement ps = con.prepareStatement(query);
-            ps.setString(1, "%" + userName.trim().toLowerCase() + "%");
+            ps.setString(1, "%" + userName.toLowerCase() + "%");
 
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
 
-                int id = rs.getInt("id");
-
-                String issue = rs.getString("issue");
-                String location = rs.getString("location");
+                String issue = rs.getString("issue").toLowerCase();
+                String location = rs.getString("location").toLowerCase();
                 String status = rs.getString("status");
 
-                String priority = rs.getString("priority");
-                if (priority == null) priority = "Low";
+                // 🔍 SEARCH FILTER
+                if (!search.isEmpty() &&
+                        !(issue.contains(search) || location.contains(search))) {
+                    continue;
+                }
 
-                String resolved = rs.getString("resolved_by");
-                if (resolved == null) resolved = "-";
+                // 🎯 STATUS FILTER
+                if (!currentFilter.equals("All") &&
+                        !status.equalsIgnoreCase(currentFilter)) {
+                    continue;
+                }
 
-                Timestamp createdAt = rs.getTimestamp("created_at");
-                Timestamp resolvedAt = rs.getTimestamp("resolved_at");
-
-                String createdDate = (createdAt != null) ? createdAt.toString() : "-";
-                String resolvedDate = (resolvedAt != null) ? resolvedAt.toString() : "-";
-
-                mainPanel.add(createCard(id, issue, location, status,
-                        priority, resolved, createdDate, resolvedDate));
+                mainPanel.add(createCard(issue, location, status));
             }
 
             mainPanel.revalidate();

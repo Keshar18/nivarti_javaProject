@@ -225,7 +225,7 @@ public class MainGUI {
         });
         
         userLoginBtn.addActionListener(e -> 
-        JOptionPane.showMessageDialog(null, "User Login Coming Soon 🔒")
+        JOptionPane.showMessageDialog(null, "LOGIN")
     );
 
     adminLoginBtn.addActionListener(e -> 
@@ -236,10 +236,11 @@ public class MainGUI {
 
         backBtn.addActionListener(e -> cardLayout.show(mainPanel, "HOME"));
 
-        // ================= ADD =================
+        
         mainPanel.add(homePanel, "HOME");
         mainPanel.add(addPanel, "ADD");
         mainPanel.add(myPanel, "MY");
+        mainPanel.add(LoginPage.createPanel(cardLayout, mainPanel), "LOGIN");
 
         frame.add(mainPanel);
         frame.setVisible(true);

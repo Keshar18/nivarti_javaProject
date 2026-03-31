@@ -241,7 +241,7 @@ public class MainGUI {
         mainPanel.add(addPanel, "ADD");
         mainPanel.add(myPanel, "MY");
         mainPanel.add(LoginPage.createPanel(cardLayout, mainPanel), "LOGIN");
-        mainPanel.add(SignupPage.createPanel(cardLayout, mainPanel), "SIGNUP");
+        mainPanel.add(signupPage.createPanel(cardLayout, mainPanel), "SIGNUP");
 
         frame.add(mainPanel);
         frame.setVisible(true);

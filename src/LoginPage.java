@@ -39,8 +39,8 @@ public class LoginPage {
             field.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         }
 
-        JLabel userLabel = new JLabel("Username");
-        JLabel passLabel = new JLabel("Password");
+        JLabel userLabel = new JLabel("email");
+        JLabel passLabel = new JLabel("Enter your Password");
 
         
 //      ALIGNMENT FIX
@@ -79,16 +79,16 @@ public class LoginPage {
         // 🔥 LOGIN ACTION
         loginBtn.addActionListener(e -> {
 
-            String username = userField.getText().trim();
+            String email = userField.getText().trim();
             String password = new String(passField.getPassword());
 
             try {
                 Connection con = DBConnection.getConnection();
 
-                String query = "SELECT * FROM users WHERE username=? AND password=?";
+                String query = "SELECT * FROM users WHERE email=? AND password=?";
                 PreparedStatement ps = con.prepareStatement(query);
 
-                ps.setString(1, username);
+                ps.setString(1, email);
                 ps.setString(2, password);
 
                 ResultSet rs = ps.executeQuery();
@@ -96,7 +96,7 @@ public class LoginPage {
                 if (rs.next()) {
 
                     // 🔥 SAVE USER
-                    MainGUI.currentUser = username;
+                    MainGUI.currentUser = email;
 
                     // 🔥 GO HOME
                     cardLayout.show(mainPanel, "HOME");

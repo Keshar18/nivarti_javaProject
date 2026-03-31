@@ -2,7 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.sql.*;
 
-public class SignupPage {
+public class signupPage {
 
     public static JPanel createPanel(CardLayout cardLayout, JPanel mainPanel) {
 
@@ -31,8 +31,8 @@ public class SignupPage {
             field.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200)));
         }
 
-        JLabel userLabel = new JLabel("Username");
-        JLabel passLabel = new JLabel("Password");
+        JLabel userLabel = new JLabel("Email");
+        JLabel passLabel = new JLabel("Set Password");
 
         // ALIGNMENT
         userLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -52,11 +52,16 @@ public class SignupPage {
 
         signupBtn.addActionListener(e -> {
 
-            String username = userField.getText().trim();
+            String email = userField.getText().trim();
             String password = new String(passField.getPassword());
 
-            if (username.isEmpty() || password.isEmpty()) {
+            if (email.isEmpty() || password.isEmpty()) {
                 msg.setText("All fields required ❌");
+                return;
+            }
+         // EMAIL VALIDATION
+            if (!email.contains("@")) {
+                msg.setText("Invalid Email ❌");
                 return;
             }
 
@@ -64,10 +69,10 @@ public class SignupPage {
                 Connection con = DBConnection.getConnection();
 
                 PreparedStatement ps = con.prepareStatement(
-                        "INSERT INTO users(username, password) VALUES (?, ?)"
+                		"INSERT INTO users(email, password) VALUES (?, ?)"
                 );
 
-                ps.setString(1, username);
+                ps.setString(1, email);
                 ps.setString(2, password);
 
                 ps.executeUpdate();

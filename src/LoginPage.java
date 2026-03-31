@@ -62,6 +62,19 @@ public class LoginPage {
         JLabel msg = new JLabel("");
         msg.setForeground(Color.RED);
         msg.setAlignmentX(Component.CENTER_ALIGNMENT);
+        
+        
+        JButton signupLink = new JButton("Create Account");
+        signupLink.setBorderPainted(false);
+        signupLink.setContentAreaFilled(false);
+        signupLink.setForeground(new Color(58,123,213));
+        signupLink.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        signupLink.addActionListener(e ->
+            cardLayout.show(mainPanel, "SIGNUP")
+        );
+
+        card.add(signupLink);
 
         // 🔥 LOGIN ACTION
         loginBtn.addActionListener(e -> {

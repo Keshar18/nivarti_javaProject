@@ -16,6 +16,7 @@ public class LoginPage {
         card.setBackground(Color.WHITE);
         card.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
         card.setPreferredSize(new Dimension(350, 300));
+        card.setMaximumSize(new Dimension(350, 300));
 
         // 🔥 TITLE
         JLabel title = new JLabel("Login");
@@ -41,13 +42,22 @@ public class LoginPage {
         JLabel userLabel = new JLabel("Username");
         JLabel passLabel = new JLabel("Password");
 
-        // 🔥 BUTTON
+        
+//      ALIGNMENT FIX
+        userLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        passLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        userField.setAlignmentX(Component.LEFT_ALIGNMENT);
+        passField.setAlignmentX(Component.LEFT_ALIGNMENT);
+        
+        
+        //  BUTTON
         JButton loginBtn = new JButton("Login");
         loginBtn.setBackground(new Color(58, 123, 213)); // SAME BLUE
         loginBtn.setForeground(Color.WHITE);
         loginBtn.setFocusPainted(false);
         loginBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
-        loginBtn.setMaximumSize(new Dimension(200, 40));
+        loginBtn.setMaximumSize(new Dimension(300, 40));
 
         JLabel msg = new JLabel("");
         msg.setForeground(Color.RED);

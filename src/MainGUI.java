@@ -225,7 +225,7 @@ public class MainGUI {
         });
         
         userLoginBtn.addActionListener(e -> 
-        JOptionPane.showMessageDialog(null, "LOGIN")
+        cardLayout.show(mainPanel, "LOGIN")
     );
 
     adminLoginBtn.addActionListener(e -> 

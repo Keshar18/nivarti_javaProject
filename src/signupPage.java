@@ -46,9 +46,11 @@ public class signupPage {
         signupBtn.setFocusPainted(false);
         signupBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JLabel msg = new JLabel("");
-        msg.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JLabel msg = new JLabel(" ");
+        msg.setPreferredSize(new Dimension(300, 20)); // 🔥 space reserve
+        msg.setMaximumSize(new Dimension(300, 20));
         msg.setForeground(Color.RED);
+        msg.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         signupBtn.addActionListener(e -> {
 

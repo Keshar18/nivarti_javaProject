@@ -13,8 +13,8 @@ public class signupPage {
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
         card.setBackground(Color.WHITE);
         card.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
-        card.setPreferredSize(new Dimension(350, 320));
-        card.setMaximumSize(new Dimension(350, 320));
+        card.setPreferredSize(new Dimension(350, 360));
+        card.setMaximumSize(new Dimension(350, 360));
 
         JLabel title = new JLabel("Sign Up");
         title.setFont(new Font("Segoe UI", Font.BOLD, 20));

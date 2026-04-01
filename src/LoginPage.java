@@ -12,7 +12,7 @@ public class LoginPage {
         JPanel card = new JPanel(new GridBagLayout());
         card.setBackground(Color.WHITE);
         card.setBorder(BorderFactory.createEmptyBorder(25, 35, 25, 35));
-        card.setPreferredSize(new Dimension(350, 380));
+        card.setPreferredSize(new Dimension(420, 400));
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(8, 0, 8, 0);
@@ -35,6 +35,8 @@ public class LoginPage {
         card.add(emailLabel, gbc);
 
         JTextField emailField = new JTextField();
+        emailField.setPreferredSize(new Dimension(300, 35));
+        
         gbc.gridy = y++;
         card.add(emailField, gbc);
 

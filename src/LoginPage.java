@@ -11,8 +11,8 @@ public class LoginPage {
 
         JPanel card = new JPanel(new GridBagLayout());
         card.setBackground(Color.WHITE);
-        card.setBorder(BorderFactory.createEmptyBorder(25, 35, 25, 35));
-        card.setPreferredSize(new Dimension(420, 400));
+        card.setBorder(BorderFactory.createEmptyBorder(25, 40, 25, 40));
+        card.setPreferredSize(new Dimension(420, 420)); // 🔥 width increased
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(8, 0, 8, 0);
@@ -36,7 +36,7 @@ public class LoginPage {
 
         JTextField emailField = new JTextField();
         emailField.setPreferredSize(new Dimension(300, 35));
-        
+        emailField.setBorder(BorderFactory.createLineBorder(new Color(200,200,200)));
         gbc.gridy = y++;
         card.add(emailField, gbc);
 
@@ -46,6 +46,8 @@ public class LoginPage {
         card.add(passLabel, gbc);
 
         JPasswordField passField = new JPasswordField();
+        passField.setPreferredSize(new Dimension(300, 35));
+        passField.setBorder(BorderFactory.createLineBorder(new Color(200,200,200)));
         gbc.gridy = y++;
         card.add(passField, gbc);
 
@@ -57,20 +59,28 @@ public class LoginPage {
         gbc.gridy = y++;
         card.add(loginBtn, gbc);
 
-        // MESSAGE LABEL (FIXED POSITION)
+        // MESSAGE
         JLabel msg = new JLabel(" ");
         msg.setForeground(Color.RED);
         msg.setHorizontalAlignment(SwingConstants.CENTER);
         gbc.gridy = y++;
         card.add(msg, gbc);
 
-        // SIGNUP BUTTON
+        // SIGNUP
         JButton signupBtn = new JButton("Create Account");
         signupBtn.setBorderPainted(false);
         signupBtn.setContentAreaFilled(false);
         signupBtn.setForeground(new Color(58, 123, 213));
         gbc.gridy = y++;
         card.add(signupBtn, gbc);
+
+        // 🔥 BACK BUTTON
+        JButton backBtn = new JButton("← Back");
+        backBtn.setBorderPainted(false);
+        backBtn.setContentAreaFilled(false);
+        backBtn.setForeground(Color.GRAY);
+        gbc.gridy = y++;
+        card.add(backBtn, gbc);
 
         // LOGIN LOGIC
         loginBtn.addActionListener(e -> {
@@ -79,7 +89,6 @@ public class LoginPage {
             String pass = new String(passField.getPassword());
 
             if (email.isEmpty() || pass.isEmpty()) {
-                msg.setForeground(Color.RED);
                 msg.setText("All fields required ❌");
                 return;
             }
@@ -104,7 +113,6 @@ public class LoginPage {
                     msg.setForeground(new Color(40, 167, 69));
                     msg.setText("Login Success ✅");
 
-                    // 👉 NEXT PAGE (CHANGE IF NEEDED)
                     cardLayout.show(mainPanel, "HOME");
 
                 } else {
@@ -121,6 +129,10 @@ public class LoginPage {
         // NAVIGATION
         signupBtn.addActionListener(e ->
                 cardLayout.show(mainPanel, "SIGNUP")
+        );
+
+        backBtn.addActionListener(e ->
+                cardLayout.show(mainPanel, "HOME")
         );
 
         panel.add(card);

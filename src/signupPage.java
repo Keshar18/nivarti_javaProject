@@ -49,7 +49,7 @@ public class signupPage {
         JLabel msg = new JLabel(" ");
         msg.setPreferredSize(new Dimension(300, 20)); // 🔥 space reserve
         msg.setMaximumSize(new Dimension(300, 20));
-        msg.setForeground(Color.RED);
+        msg.setForeground(new Color(220, 53, 69));
         msg.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         signupBtn.addActionListener(e -> {

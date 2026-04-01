@@ -10,104 +10,70 @@ public class signupPage {
         panel.setBackground(new Color(240, 244, 250));
 
         JPanel card = new JPanel();
-        card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
+        card.setLayout(new GridLayout(0, 1, 10, 10)); // 🔥 FIX: BoxLayout hata diya
         card.setBackground(Color.WHITE);
-        card.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
-        card.setPreferredSize(new Dimension(350, 360));
-        card.setMaximumSize(new Dimension(350, 360));
+        card.setBorder(BorderFactory.createEmptyBorder(25, 30, 25, 30));
+        card.setPreferredSize(new Dimension(350, 380));
 
         JLabel title = new JLabel("Sign Up");
         title.setFont(new Font("Segoe UI", Font.BOLD, 20));
-        title.setAlignmentX(Component.CENTER_ALIGNMENT);
+        title.setHorizontalAlignment(SwingConstants.CENTER);
 
-        JTextField userField = new JTextField();
+        JTextField emailField = new JTextField();
+        emailField.setPreferredSize(new Dimension(200, 30));
+
         JPasswordField passField = new JPasswordField();
-
-        Dimension fieldSize = new Dimension(300, 40);
-
-        for (JTextField field : new JTextField[]{userField, passField}) {
-            field.setMaximumSize(fieldSize);
-            field.setBackground(new Color(245, 247, 250));
-            field.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200)));
-        }
-
-        JLabel userLabel = new JLabel("Email");
-        JLabel passLabel = new JLabel("Set Password");
-
-        // ALIGNMENT
-        userLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        passLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        userField.setAlignmentX(Component.LEFT_ALIGNMENT);
-        passField.setAlignmentX(Component.LEFT_ALIGNMENT);
+        passField.setPreferredSize(new Dimension(200, 30));
 
         JButton signupBtn = new JButton("Create Account");
         signupBtn.setBackground(new Color(58, 123, 213));
         signupBtn.setForeground(Color.WHITE);
-        signupBtn.setFocusPainted(false);
-        signupBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JLabel msg = new JLabel(" ");
-        msg.setPreferredSize(new Dimension(300, 20)); // 🔥 space reserve
-        msg.setMaximumSize(new Dimension(300, 20));
+        JLabel msg = new JLabel(" "); // 🔥 always space reserved
         msg.setForeground(new Color(220, 53, 69));
-        msg.setAlignmentX(Component.CENTER_ALIGNMENT);
+        msg.setHorizontalAlignment(SwingConstants.CENTER);
 
+        // 🔥 ADD COMPONENTS
+        card.add(title);
+        card.add(new JLabel("Email"));
+        card.add(emailField);
+        card.add(new JLabel("Password"));
+        card.add(passField);
+        card.add(signupBtn);
+        card.add(msg);
+
+        // 🔥 ACTION
         signupBtn.addActionListener(e -> {
 
-            String email = userField.getText().trim();
-            String password = new String(passField.getPassword());
+            String email = emailField.getText().trim();
+            String pass = new String(passField.getPassword());
 
-            if (email.isEmpty() || password.isEmpty()) {
+            if (email.isEmpty() || pass.isEmpty()) {
                 msg.setText("All fields required ❌");
-                return;
-            }
-         // EMAIL VALIDATION
-            if (!email.contains("@")) {
-                msg.setText("Invalid Email ❌");
                 return;
             }
 
             try {
                 Connection con = DBConnection.getConnection();
 
-                PreparedStatement ps = con.prepareStatement(
-                		"INSERT INTO users(email, password) VALUES (?, ?)"
-                );
+                String query = "INSERT INTO users (email, password) VALUES (?, ?)";
+                PreparedStatement ps = con.prepareStatement(query);
 
                 ps.setString(1, email);
-                ps.setString(2, password);
+                ps.setString(2, pass);
 
                 ps.executeUpdate();
 
-                JOptionPane.showMessageDialog(null, "Account Created ✅");
-
-                // go to login
-                cardLayout.show(mainPanel, "LOGIN");
+                msg.setForeground(new Color(40, 167, 69));
+                msg.setText("Account Created ✅");
 
             } catch (Exception ex) {
-                msg.setText("Username already exists ❌");
+                ex.printStackTrace();
+                msg.setText("Error creating account ❌");
             }
         });
 
-        card.add(title);
-        card.add(Box.createRigidArea(new Dimension(0, 20)));
-
-        card.add(userLabel);
-        card.add(userField);
-
-        card.add(Box.createRigidArea(new Dimension(0, 15)));
-
-        card.add(passLabel);
-        card.add(passField);
-
-        card.add(Box.createRigidArea(new Dimension(0, 20)));
-
-        card.add(signupBtn);
-        card.add(Box.createRigidArea(new Dimension(0, 10)));
-        card.add(msg);
-
         panel.add(card);
-
         return panel;
     }
 }

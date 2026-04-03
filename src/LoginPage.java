@@ -110,11 +110,12 @@ public class LoginPage {
                 ResultSet rs = ps.executeQuery();
 
                 if (rs.next()) {
+                    Session.userEmail = email; // 🔥 USER SAVE
+
                     msg.setForeground(new Color(40, 167, 69));
                     msg.setText("Login Success ✅");
 
                     cardLayout.show(mainPanel, "HOME");
-
                 } else {
                     msg.setForeground(Color.RED);
                     msg.setText("Invalid email or password ❌");

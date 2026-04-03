@@ -2,11 +2,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.*;
 
 public class MainGUI {
 
-    static String currentUser = ""; 
+    static String currentUser = ""; // (kept for safety, not used now)
 
     public static void main(String[] args) {
 
@@ -24,13 +23,6 @@ public class MainGUI {
         homePanel.setBackground(new Color(58, 123, 213));
 
         JLabel heading = new JLabel("Bridge the Gap Between Citizens & Officials");
-        JLabel welcomeLabel = new JLabel("");
-        welcomeLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        welcomeLabel.setForeground(Color.WHITE);
-        welcomeLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        homePanel.add(welcomeLabel);
-        homePanel.add(Box.createRigidArea(new Dimension(0, 10)));
         heading.setFont(new Font("Segoe UI", Font.BOLD, 20));
         heading.setForeground(Color.WHITE);
         heading.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -40,58 +32,49 @@ public class MainGUI {
         sub.setForeground(Color.WHITE);
         sub.setAlignmentX(Component.CENTER_ALIGNMENT);
 
+        JLabel welcomeLabel = new JLabel("");
+        welcomeLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        welcomeLabel.setForeground(Color.WHITE);
+        welcomeLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
         JButton reportBtn = new JButton("Add Complaint");
         JButton myBtn = new JButton("My Complaints");
-        JButton adminBtn = new JButton("Admin Panel");
         JButton userLoginBtn = new JButton("User Login");
         JButton adminLoginBtn = new JButton("Admin Login");
+        JButton logoutBtn = new JButton("Logout");
 
         Dimension btnSize = new Dimension(200, 45);
 
-        for (JButton btn : new JButton[]{reportBtn, myBtn, userLoginBtn, adminLoginBtn}) {
+        for (JButton btn : new JButton[]{reportBtn, myBtn, userLoginBtn, adminLoginBtn, logoutBtn}) {
             btn.setMaximumSize(btnSize);
             btn.setAlignmentX(Component.CENTER_ALIGNMENT);
             btn.setBackground(Color.WHITE);
             btn.setFocusPainted(false);
         }
-        homePanel.add(Box.createVerticalGlue());
 
+        homePanel.add(Box.createVerticalGlue());
         homePanel.add(heading);
         homePanel.add(Box.createRigidArea(new Dimension(0, 10)));
         homePanel.add(sub);
+        homePanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        homePanel.add(welcomeLabel);
         homePanel.add(Box.createRigidArea(new Dimension(0, 30)));
 
         homePanel.add(reportBtn);
         homePanel.add(Box.createRigidArea(new Dimension(0, 15)));
-
         homePanel.add(myBtn);
         homePanel.add(Box.createRigidArea(new Dimension(0, 20)));
-        
-     //  NEW PANEL FOR LOGIN BUTTONS
+
         JPanel loginPanel = new JPanel();
         loginPanel.setOpaque(false);
-
         loginPanel.add(userLoginBtn);
         loginPanel.add(Box.createRigidArea(new Dimension(20, 0)));
         loginPanel.add(adminLoginBtn);
 
         homePanel.add(loginPanel);
-
-        homePanel.add(Box.createVerticalGlue());
-        
-        
-        JButton logoutBtn = new JButton("Logout");
-        logoutBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        logoutBtn.addActionListener(e -> {
-            Session.userEmail = null;
-            JOptionPane.showMessageDialog(null, "Logged out!");
-            cardLayout.show(mainPanel, "HOME");
-        });
-
-        homePanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        homePanel.add(Box.createRigidArea(new Dimension(0, 15)));
         homePanel.add(logoutBtn);
-        
+        homePanel.add(Box.createVerticalGlue());
 
         // ================= ADD PANEL =================
         JPanel addPanel = new JPanel(new GridBagLayout());
@@ -107,13 +90,12 @@ public class MainGUI {
         title.setFont(new Font("Segoe UI", Font.BOLD, 18));
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JTextField nameField = new JTextField();
         JTextField issueField = new JTextField();
         JTextField locationField = new JTextField();
 
         Dimension fieldSize = new Dimension(320, 40);
 
-        for (JTextField field : new JTextField[]{nameField, issueField, locationField}) {
+        for (JTextField field : new JTextField[]{issueField, locationField}) {
             field.setMaximumSize(fieldSize);
             field.setBackground(new Color(245, 247, 250));
             field.setBorder(BorderFactory.createCompoundBorder(
@@ -124,37 +106,26 @@ public class MainGUI {
             field.setAlignmentX(Component.LEFT_ALIGNMENT);
         }
 
-        JLabel nameLabel = new JLabel("Full Name");
-        JLabel issueLabel = new JLabel("Describe Issue");
-        JLabel locationLabel = new JLabel("Location");
-
-        for (JLabel label : new JLabel[]{nameLabel, issueLabel, locationLabel}) {
-            label.setFont(new Font("Segoe UI", Font.BOLD, 13));
-            label.setForeground(new Color(80, 80, 80));
-            label.setAlignmentX(Component.LEFT_ALIGNMENT);
-        }
-
         JButton submitBtn = new JButton("Submit");
         JButton backBtn = new JButton("← Back");
 
         submitBtn.setBackground(new Color(0, 120, 215));
         submitBtn.setForeground(Color.WHITE);
         submitBtn.setFocusPainted(false);
-        submitBtn.setMaximumSize(new Dimension(260, 40));
         submitBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        backBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        // ================= SUBMIT LOGIC =================
         submitBtn.addActionListener(e -> {
 
-            String name = nameField.getText();
+            if (Session.userEmail == null) {
+                JOptionPane.showMessageDialog(null, "Please login first!");
+                cardLayout.show(mainPanel, "LOGIN");
+                return;
+            }
+
             String issue = issueField.getText();
             String location = locationField.getText();
-            
-           
 
-            if(name.isEmpty() || issue.isEmpty() || location.isEmpty()) {
+            if(issue.isEmpty() || location.isEmpty()) {
                 JOptionPane.showMessageDialog(null, "Please fill all fields!");
                 return;
             }
@@ -162,61 +133,39 @@ public class MainGUI {
             try {
                 Connection con = DBConnection.getConnection();
 
-                if(con == null) {
-                    JOptionPane.showMessageDialog(null, "Database not connected ❌");
-                    return;
-                }
-
                 String query = "INSERT INTO complaints(name, issue, location, status) VALUES (?, ?, ?, 'Pending')";
                 PreparedStatement ps = con.prepareStatement(query);
 
-                ps.setString(1, name.trim().toLowerCase());
+                ps.setString(1, Session.userEmail);
                 ps.setString(2, issue);
                 ps.setString(3, location);
 
-                int result = ps.executeUpdate();
+                ps.executeUpdate();
 
-                if(result > 0) {
-                    JOptionPane.showMessageDialog(null, "Complaint Submitted Successfully ✅");
+                JOptionPane.showMessageDialog(null, "Complaint Submitted ✅");
 
-                    // SAVE USER
-                    currentUser = name;
+                issueField.setText("");
+                locationField.setText("");
 
-                    // CLEAR
-                    nameField.setText("");
-                    issueField.setText("");
-                    locationField.setText("");
-
-                    // GO HOME
-                    cardLayout.show(mainPanel, "HOME");
-                }
+                cardLayout.show(mainPanel, "HOME");
 
             } catch (Exception ex) {
                 ex.printStackTrace();
-                JOptionPane.showMessageDialog(null, "Error: " + ex.getMessage());
             }
         });
 
-        // Layout
+        backBtn.addActionListener(e -> {
+            cardLayout.show(mainPanel, "HOME");
+            updateDashboard(reportBtn, myBtn, userLoginBtn, adminLoginBtn, logoutBtn, welcomeLabel);
+        });
+
         card.add(title);
         card.add(Box.createRigidArea(new Dimension(0, 15)));
-
-        card.add(nameLabel);
-        card.add(Box.createRigidArea(new Dimension(0, 5)));
-        card.add(nameField);
-
-        card.add(Box.createRigidArea(new Dimension(0, 15)));
-
-        card.add(issueLabel);
-        card.add(Box.createRigidArea(new Dimension(0, 5)));
+        card.add(new JLabel("Issue"));
         card.add(issueField);
-
         card.add(Box.createRigidArea(new Dimension(0, 15)));
-
-        card.add(locationLabel);
-        card.add(Box.createRigidArea(new Dimension(0, 5)));
+        card.add(new JLabel("Location"));
         card.add(locationField);
-
         card.add(Box.createRigidArea(new Dimension(0, 20)));
         card.add(submitBtn);
         card.add(Box.createRigidArea(new Dimension(0, 10)));
@@ -227,43 +176,41 @@ public class MainGUI {
         // ================= MY PANEL =================
         JPanel myPanel = ViewComplaints.createPanel(cardLayout, mainPanel);
 
-        // ================= NAVIGATION =================
-        reportBtn.addActionListener(e -> {
+        // ================= BUTTON ACTIONS =================
 
+        reportBtn.addActionListener(e -> {
             if(Session.userEmail == null){
                 JOptionPane.showMessageDialog(null, "Please login first!");
                 cardLayout.show(mainPanel, "LOGIN");
                 return;
             }
-
             cardLayout.show(mainPanel, "ADD");
         });
 
         myBtn.addActionListener(e -> {
-
             if(Session.userEmail == null){
                 JOptionPane.showMessageDialog(null, "Please login first!");
                 cardLayout.show(mainPanel, "LOGIN");
                 return;
             }
-
             ViewComplaints.loadData(Session.userEmail);
             cardLayout.show(mainPanel, "MY");
         });
-        
-        userLoginBtn.addActionListener(e -> 
-        cardLayout.show(mainPanel, "LOGIN")
-    );
 
-    adminLoginBtn.addActionListener(e -> 
-        JOptionPane.showMessageDialog(null, "Admin Login Coming Soon 🔒")
-    );
-        
-        adminBtn.addActionListener(e -> new UpdateStatus());
+        userLoginBtn.addActionListener(e -> cardLayout.show(mainPanel, "LOGIN"));
 
-        backBtn.addActionListener(e -> cardLayout.show(mainPanel, "HOME"));
+        adminLoginBtn.addActionListener(e ->
+                JOptionPane.showMessageDialog(null, "Admin Login Coming Soon 🔒")
+        );
 
-        
+        logoutBtn.addActionListener(e -> {
+            Session.userEmail = null;
+            JOptionPane.showMessageDialog(null, "Logged out!");
+            cardLayout.show(mainPanel, "HOME");
+            updateDashboard(reportBtn, myBtn, userLoginBtn, adminLoginBtn, logoutBtn, welcomeLabel);
+        });
+
+        // ================= ADD PANELS =================
         mainPanel.add(homePanel, "HOME");
         mainPanel.add(addPanel, "ADD");
         mainPanel.add(myPanel, "MY");
@@ -272,5 +219,33 @@ public class MainGUI {
 
         frame.add(mainPanel);
         frame.setVisible(true);
+
+        // INITIAL DASHBOARD STATE
+        updateDashboard(reportBtn, myBtn, userLoginBtn, adminLoginBtn, logoutBtn, welcomeLabel);
+    }
+
+    // ================= DASHBOARD CONTROL =================
+    public static void updateDashboard(JButton reportBtn, JButton myBtn,
+                                       JButton loginBtn, JButton adminLoginBtn,
+                                       JButton logoutBtn, JLabel welcomeLabel) {
+
+        if(Session.userEmail == null){
+            reportBtn.setVisible(false);
+            myBtn.setVisible(false);
+            logoutBtn.setVisible(false);
+            welcomeLabel.setText("");
+
+            loginBtn.setVisible(true);
+            adminLoginBtn.setVisible(true);
+
+        } else {
+            reportBtn.setVisible(true);
+            myBtn.setVisible(true);
+            logoutBtn.setVisible(true);
+            welcomeLabel.setText("Welcome, " + Session.userEmail);
+
+            loginBtn.setVisible(false);
+            adminLoginBtn.setVisible(false);
+        }
     }
 }

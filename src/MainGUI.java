@@ -209,7 +209,16 @@ public class MainGUI {
         JPanel myPanel = ViewComplaints.createPanel(cardLayout, mainPanel);
 
         // ================= NAVIGATION =================
-        reportBtn.addActionListener(e -> cardLayout.show(mainPanel, "ADD"));
+        reportBtn.addActionListener(e -> {
+
+            if(Session.userEmail == null){
+                JOptionPane.showMessageDialog(null, "Please login first!");
+                cardLayout.show(mainPanel, "LOGIN");
+                return;
+            }
+
+            cardLayout.show(mainPanel, "ADD");
+        });
 
         myBtn.addActionListener(e -> {
 

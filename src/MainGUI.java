@@ -24,6 +24,13 @@ public class MainGUI {
         homePanel.setBackground(new Color(58, 123, 213));
 
         JLabel heading = new JLabel("Bridge the Gap Between Citizens & Officials");
+        JLabel welcomeLabel = new JLabel("");
+        welcomeLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        welcomeLabel.setForeground(Color.WHITE);
+        welcomeLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        homePanel.add(welcomeLabel);
+        homePanel.add(Box.createRigidArea(new Dimension(0, 10)));
         heading.setFont(new Font("Segoe UI", Font.BOLD, 20));
         heading.setForeground(Color.WHITE);
         heading.setAlignmentX(Component.CENTER_ALIGNMENT);

@@ -91,7 +91,7 @@ public class signupPage {
         });
 
         backBtn.addActionListener(e ->
-                cardLayout.show(mainPanel, "LOGIN"
+                cardLayout.show(mainPanel, "LOGIN")
         );
 
         // ADD COMPONENTS (PERFECT SPACING)

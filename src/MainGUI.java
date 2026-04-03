@@ -222,14 +222,13 @@ public class MainGUI {
 
         myBtn.addActionListener(e -> {
 
-            if(currentUser.isEmpty()) {
-                JOptionPane.showMessageDialog(null, "Please submit a complaint first!");
+            if(Session.userEmail == null){
+                JOptionPane.showMessageDialog(null, "Please login first!");
+                cardLayout.show(mainPanel, "LOGIN");
                 return;
             }
-            
-            
 
-            ViewComplaints.loadData(currentUser);
+            ViewComplaints.loadData(Session.userEmail);
             cardLayout.show(mainPanel, "MY");
         });
         

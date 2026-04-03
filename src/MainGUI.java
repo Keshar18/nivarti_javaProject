@@ -72,6 +72,19 @@ public class MainGUI {
 
         homePanel.add(Box.createVerticalGlue());
         
+        
+        JButton logoutBtn = new JButton("Logout");
+        logoutBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        logoutBtn.addActionListener(e -> {
+            Session.userEmail = null;
+            JOptionPane.showMessageDialog(null, "Logged out!");
+            cardLayout.show(mainPanel, "HOME");
+        });
+
+        homePanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        homePanel.add(logoutBtn);
+        
 
         // ================= ADD PANEL =================
         JPanel addPanel = new JPanel(new GridBagLayout());

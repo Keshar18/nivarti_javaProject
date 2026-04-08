@@ -88,6 +88,7 @@ public class signupPage {
 
              // 🔥 GO TO DASHBOARD
              cardLayout.show(mainPanel, "HOME");
+             MainGUI.refreshDashboard();
 
             } catch (SQLIntegrityConstraintViolationException ex) {
                 msg.setText("Email already exists ❌");

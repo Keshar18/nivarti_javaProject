@@ -116,6 +116,7 @@ public class LoginPage {
                     msg.setText("Login Success ✅");
 
                     cardLayout.show(mainPanel, "HOME");
+                    MainGUI.refreshDashboard();
                 } else {
                     msg.setForeground(Color.RED);
                     msg.setText("Invalid email or password ❌");

@@ -5,7 +5,7 @@ import java.sql.PreparedStatement;
 
 public class MainGUI {
 
-    // 🔥 GLOBAL VARIABLES (IMPORTANT)
+    //  GLOBAL VARIABLES (IMPORTANT)
     static JButton reportBtn, myBtn, userLoginBtn, adminLoginBtn, logoutBtn;
     static JLabel welcomeLabel;
 
@@ -183,9 +183,25 @@ public class MainGUI {
 
         userLoginBtn.addActionListener(e -> cardLayout.show(mainPanel, "LOGIN"));
 
-        adminLoginBtn.addActionListener(e ->
-                JOptionPane.showMessageDialog(null, "Admin Login Coming Soon 🔒")
-        );
+        adminLoginBtn.addActionListener(e -> {
+
+            String email = JOptionPane.showInputDialog("Enter Admin Email:");
+            String pass = JOptionPane.showInputDialog("Enter Password:");
+
+            if(email != null && pass != null &&
+               email.equals("admin@gmail.com") && pass.equals("admin123")){
+
+                Session.userEmail = email;
+                Session.role = "admin";
+
+                JOptionPane.showMessageDialog(null, "Admin Login Successful ✅");
+
+                new UpdateStatus(); // 🔥 OPEN ADMIN PANEL
+
+            } else {
+                JOptionPane.showMessageDialog(null, "Invalid Admin Credentials ❌");
+            }
+        });
 
         logoutBtn.addActionListener(e -> {
             Session.userEmail = null;

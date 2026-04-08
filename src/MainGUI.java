@@ -94,6 +94,11 @@ public class MainGUI {
 
         JTextField issueField = new JTextField();
         JTextField locationField = new JTextField();
+        
+        JComboBox<String> categoryBox = new JComboBox<>(
+        	    new String[]{"Road", "Water", "Electricity", "Garbage"}
+        	);
+        	categoryBox.setMaximumSize(new Dimension(320, 40));
 
         Dimension fieldSize = new Dimension(320, 40);
 

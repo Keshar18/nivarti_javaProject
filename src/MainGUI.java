@@ -245,5 +245,11 @@ public class MainGUI {
             userLoginBtn.setVisible(false);
             adminLoginBtn.setVisible(false);
         }
+        
+        // ADMIN OVERRIDE (IMPORTANT)
+        if(Session.role != null && Session.role.equals("admin")){
+            reportBtn.setVisible(false);
+            myBtn.setVisible(false);
+        }
     }
 }

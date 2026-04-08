@@ -110,10 +110,12 @@ public class LoginPage {
                 ResultSet rs = ps.executeQuery();
 
                 if (rs.next()) {
-                    Session.userEmail = email; // 🔥 USER SAVE
+                    Session.userEmail = email; // USER SAVE
+                    Session.role = "user"; 
 
                     msg.setForeground(new Color(40, 167, 69));
                     msg.setText("Login Success ✅");
+                    
 
                     cardLayout.show(mainPanel, "HOME");
                     MainGUI.refreshDashboard();

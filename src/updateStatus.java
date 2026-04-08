@@ -200,9 +200,9 @@ public class UpdateStatus extends JFrame {
         for (int i = 0; i < total; i++) {
             String status = model.getValueAt(i, 4).toString();
 
-            if (status.equals("Pending")) pending++;
-            else if (status.equals("In Progress")) progress++;
-            else if (status.equals("Resolved")) resolved++;
+            if (status.equalsIgnoreCase("Pending")) pending++;
+            else if (status.equalsIgnoreCase("In Progress")) progress++;
+            else if (status.equalsIgnoreCase("Resolved")) resolved++;
         }
 
         totalLabel.setText("Total: " + total);
@@ -210,4 +210,3 @@ public class UpdateStatus extends JFrame {
         progressLabel.setText("In Progress: " + progress);
         resolvedLabel.setText("Resolved: " + resolved);
     }
-}

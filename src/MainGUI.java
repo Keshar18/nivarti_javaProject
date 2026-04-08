@@ -131,6 +131,7 @@ public class MainGUI {
                 ps.setString(1, Session.userEmail);
                 ps.setString(2, issueField.getText());
                 ps.setString(3, locationField.getText());
+                ps.setString(4, categoryBox.getSelectedItem().toString());
 
                 ps.executeUpdate();
 

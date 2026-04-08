@@ -125,7 +125,7 @@ public class MainGUI {
             try {
                 Connection con = DBConnection.getConnection();
 
-                String query = "INSERT INTO complaints(name, issue, location, status) VALUES (?, ?, ?, 'Pending')";
+                String query = "INSERT INTO complaints(name, issue, location, category, status) VALUES (?, ?, ?, 'Pending')";
                 PreparedStatement ps = con.prepareStatement(query);
 
                 ps.setString(1, Session.userEmail);

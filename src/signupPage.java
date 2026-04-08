@@ -76,8 +76,9 @@ public class signupPage {
 
                 ps.executeUpdate();
 
-             // 🔥 AUTO LOGIN AFTER SIGNUP
+             //  AUTO LOGIN AFTER SIGNUP
              Session.userEmail = email;
+             Session.role = "user"; 
 
              msg.setForeground(new Color(40, 167, 69));
              msg.setText("Account Created ✅");
@@ -86,7 +87,7 @@ public class signupPage {
              emailField.setText("");
              passField.setText("");
 
-             // 🔥 GO TO DASHBOARD
+             //  GO TO DASHBOARD
              cardLayout.show(mainPanel, "HOME");
              MainGUI.refreshDashboard();
 

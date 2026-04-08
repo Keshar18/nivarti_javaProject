@@ -54,7 +54,7 @@ public class ViewComplaints {
         //  ACTIONS
         searchField.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent e) {
-                loadData(MainGUI.currentUser);
+                loadData(Session.userEmail);
             }
         });
 

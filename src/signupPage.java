@@ -76,11 +76,18 @@ public class signupPage {
 
                 ps.executeUpdate();
 
-                msg.setForeground(new Color(40, 167, 69));
-                msg.setText("Account Created ✅");
+             // 🔥 AUTO LOGIN AFTER SIGNUP
+             Session.userEmail = email;
 
-                emailField.setText("");
-                passField.setText("");
+             msg.setForeground(new Color(40, 167, 69));
+             msg.setText("Account Created ✅");
+
+             // CLEAR FIELDS
+             emailField.setText("");
+             passField.setText("");
+
+             // 🔥 GO TO DASHBOARD
+             cardLayout.show(mainPanel, "HOME");
 
             } catch (SQLIntegrityConstraintViolationException ex) {
                 msg.setText("Email already exists ❌");

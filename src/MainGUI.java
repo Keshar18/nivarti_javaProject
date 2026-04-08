@@ -5,7 +5,9 @@ import java.sql.PreparedStatement;
 
 public class MainGUI {
 
-    static String currentUser = ""; // (kept for safety, not used now)
+    // 🔥 GLOBAL VARIABLES (IMPORTANT)
+    static JButton reportBtn, myBtn, userLoginBtn, adminLoginBtn, logoutBtn;
+    static JLabel welcomeLabel;
 
     public static void main(String[] args) {
 
@@ -32,16 +34,16 @@ public class MainGUI {
         sub.setForeground(Color.WHITE);
         sub.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JLabel welcomeLabel = new JLabel("");
+        welcomeLabel = new JLabel("");
         welcomeLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
         welcomeLabel.setForeground(Color.WHITE);
         welcomeLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JButton reportBtn = new JButton("Add Complaint");
-        JButton myBtn = new JButton("My Complaints");
-        JButton userLoginBtn = new JButton("User Login");
-        JButton adminLoginBtn = new JButton("Admin Login");
-        JButton logoutBtn = new JButton("Logout");
+        reportBtn = new JButton("Add Complaint");
+        myBtn = new JButton("My Complaints");
+        userLoginBtn = new JButton("User Login");
+        adminLoginBtn = new JButton("Admin Login");
+        logoutBtn = new JButton("Logout");
 
         Dimension btnSize = new Dimension(200, 45);
 
@@ -84,7 +86,7 @@ public class MainGUI {
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
         card.setBackground(Color.WHITE);
         card.setBorder(BorderFactory.createEmptyBorder(25, 30, 25, 30));
-        card.setPreferredSize(new Dimension(350, 420));
+        card.setPreferredSize(new Dimension(350, 400));
 
         JLabel title = new JLabel("Add Complaint");
         title.setFont(new Font("Segoe UI", Font.BOLD, 18));
@@ -98,12 +100,7 @@ public class MainGUI {
         for (JTextField field : new JTextField[]{issueField, locationField}) {
             field.setMaximumSize(fieldSize);
             field.setBackground(new Color(245, 247, 250));
-            field.setBorder(BorderFactory.createCompoundBorder(
-                    BorderFactory.createLineBorder(new Color(200, 200, 200)),
-                    BorderFactory.createEmptyBorder(8, 10, 8, 10)
-            ));
-            field.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-            field.setAlignmentX(Component.LEFT_ALIGNMENT);
+            field.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200)));
         }
 
         JButton submitBtn = new JButton("Submit");
@@ -111,22 +108,12 @@ public class MainGUI {
 
         submitBtn.setBackground(new Color(0, 120, 215));
         submitBtn.setForeground(Color.WHITE);
-        submitBtn.setFocusPainted(false);
-        submitBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         submitBtn.addActionListener(e -> {
 
             if (Session.userEmail == null) {
                 JOptionPane.showMessageDialog(null, "Please login first!");
                 cardLayout.show(mainPanel, "LOGIN");
-                return;
-            }
-
-            String issue = issueField.getText();
-            String location = locationField.getText();
-
-            if(issue.isEmpty() || location.isEmpty()) {
-                JOptionPane.showMessageDialog(null, "Please fill all fields!");
                 return;
             }
 
@@ -137,8 +124,8 @@ public class MainGUI {
                 PreparedStatement ps = con.prepareStatement(query);
 
                 ps.setString(1, Session.userEmail);
-                ps.setString(2, issue);
-                ps.setString(3, location);
+                ps.setString(2, issueField.getText());
+                ps.setString(3, locationField.getText());
 
                 ps.executeUpdate();
 
@@ -148,6 +135,7 @@ public class MainGUI {
                 locationField.setText("");
 
                 cardLayout.show(mainPanel, "HOME");
+                refreshDashboard();
 
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -156,19 +144,15 @@ public class MainGUI {
 
         backBtn.addActionListener(e -> {
             cardLayout.show(mainPanel, "HOME");
-            updateDashboard(reportBtn, myBtn, userLoginBtn, adminLoginBtn, logoutBtn, welcomeLabel);
+            refreshDashboard();
         });
 
         card.add(title);
-        card.add(Box.createRigidArea(new Dimension(0, 15)));
-        card.add(new JLabel("Issue"));
         card.add(issueField);
-        card.add(Box.createRigidArea(new Dimension(0, 15)));
-        card.add(new JLabel("Location"));
+        card.add(Box.createRigidArea(new Dimension(0, 10)));
         card.add(locationField);
         card.add(Box.createRigidArea(new Dimension(0, 20)));
         card.add(submitBtn);
-        card.add(Box.createRigidArea(new Dimension(0, 10)));
         card.add(backBtn);
 
         addPanel.add(card);
@@ -207,7 +191,7 @@ public class MainGUI {
             Session.userEmail = null;
             JOptionPane.showMessageDialog(null, "Logged out!");
             cardLayout.show(mainPanel, "HOME");
-            updateDashboard(reportBtn, myBtn, userLoginBtn, adminLoginBtn, logoutBtn, welcomeLabel);
+            refreshDashboard();
         });
 
         // ================= ADD PANELS =================
@@ -220,14 +204,12 @@ public class MainGUI {
         frame.add(mainPanel);
         frame.setVisible(true);
 
-        // INITIAL DASHBOARD STATE
-        updateDashboard(reportBtn, myBtn, userLoginBtn, adminLoginBtn, logoutBtn, welcomeLabel);
+        // INITIAL STATE
+        refreshDashboard();
     }
 
-    // ================= DASHBOARD CONTROL =================
-    public static void updateDashboard(JButton reportBtn, JButton myBtn,
-                                       JButton loginBtn, JButton adminLoginBtn,
-                                       JButton logoutBtn, JLabel welcomeLabel) {
+    // 🔥 DASHBOARD REFRESH METHOD
+    public static void refreshDashboard() {
 
         if(Session.userEmail == null){
             reportBtn.setVisible(false);
@@ -235,7 +217,7 @@ public class MainGUI {
             logoutBtn.setVisible(false);
             welcomeLabel.setText("");
 
-            loginBtn.setVisible(true);
+            userLoginBtn.setVisible(true);
             adminLoginBtn.setVisible(true);
 
         } else {
@@ -244,7 +226,7 @@ public class MainGUI {
             logoutBtn.setVisible(true);
             welcomeLabel.setText("Welcome, " + Session.userEmail);
 
-            loginBtn.setVisible(false);
+            userLoginBtn.setVisible(false);
             adminLoginBtn.setVisible(false);
         }
     }

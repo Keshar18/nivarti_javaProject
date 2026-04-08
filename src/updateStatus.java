@@ -2,6 +2,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.sql.*;
+import javax.swing.table.DefaultTableCellRenderer;
 
 public class UpdateStatus extends JFrame {
 
@@ -43,12 +44,39 @@ public class UpdateStatus extends JFrame {
         String[] columns = {"ID", "Name", "Issue", "Location", "Status", "Priority", "Resolved By"};
         model = new DefaultTableModel(columns, 0);
         table = new JTable(model);
+        
+        table.getColumnModel().getColumn(4).setCellRenderer(new DefaultTableCellRenderer() {
+
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value,
+                                                           boolean isSelected, boolean hasFocus,
+                                                           int row, int column) {
+
+                Component c = super.getTableCellRendererComponent(
+                        table, value, isSelected, hasFocus, row, column);
+
+                String status = value.toString();
+
+                if (status.equalsIgnoreCase("Pending")) {
+                    c.setBackground(new Color(255, 235, 59)); // yellow
+                } else if (status.equalsIgnoreCase("In Progress")) {
+                    c.setBackground(new Color(33, 150, 243)); // blue
+                } else if (status.equalsIgnoreCase("Resolved")) {
+                    c.setBackground(new Color(76, 175, 80)); // green
+                } else {
+                    c.setBackground(Color.WHITE);
+                }
+
+                return c;
+            }
+        });
 
         JScrollPane scrollPane = new JScrollPane(table);
         add(scrollPane, BorderLayout.CENTER);
 
         // 🔥 BOTTOM PANEL
         JPanel bottomPanel = new JPanel();
+        bottomPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 10));
 
         JButton updateBtn = new JButton("Update Status");
 
@@ -62,6 +90,7 @@ public class UpdateStatus extends JFrame {
         bottomPanel.add(pendingLabel);
         bottomPanel.add(progressLabel);
         bottomPanel.add(resolvedLabel);
+        
 
         add(bottomPanel, BorderLayout.SOUTH);
 

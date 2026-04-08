@@ -155,7 +155,12 @@ public class MainGUI {
         card.add(title);
         card.add(issueField);
         card.add(Box.createRigidArea(new Dimension(0, 10)));
+
         card.add(locationField);
+        card.add(Box.createRigidArea(new Dimension(0, 10)));
+
+        card.add(new JLabel("Category"));
+        card.add(categoryBox);
         card.add(Box.createRigidArea(new Dimension(0, 20)));
         card.add(submitBtn);
         card.add(backBtn);

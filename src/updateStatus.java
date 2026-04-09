@@ -5,6 +5,10 @@ import java.sql.*;
 import javax.swing.table.DefaultTableCellRenderer;
 
 public class UpdateStatus extends JFrame {
+	
+	    String selectedCategory = "All";
+	    String selectedStatus = "All";
+
 
     JTable table;
     DefaultTableModel model;
@@ -108,10 +112,25 @@ public class UpdateStatus extends JFrame {
         loadData("All");
 
         // 🔥 FILTER
-        allBtn.addActionListener(e -> loadData("All"));
-        pendingBtn.addActionListener(e -> loadData("Pending"));
-        progressBtn.addActionListener(e -> loadData("In Progress"));
-        resolvedBtn.addActionListener(e -> loadData("Resolved"));
+        allBtn.addActionListener(e -> {
+            selectedStatus = "All";
+            loadData();
+        });
+
+        pendingBtn.addActionListener(e -> {
+            selectedStatus = "Pending";
+            loadData();
+        });
+
+        progressBtn.addActionListener(e -> {
+            selectedStatus = "In Progress";
+            loadData();
+        });
+
+        resolvedBtn.addActionListener(e -> {
+            selectedStatus = "Resolved";
+            loadData();
+        });
 
         // 🔥 SEARCH
         searchBtn.addActionListener(e -> searchData(searchField.getText()));
@@ -122,18 +141,30 @@ public class UpdateStatus extends JFrame {
         setVisible(true);
     }
 
-    public void loadData(String statusFilter) {
+    public void loadData() {
         try {
             Connection con = DBConnection.getConnection();
 
-            String query = statusFilter.equals("All") ?
-                    "SELECT * FROM complaints" :
-                    "SELECT * FROM complaints WHERE status = ?";
+            String query = "SELECT * FROM complaints WHERE 1=1";
+
+            if (!selectedCategory.equals("All")) {
+                query += " AND category=?";
+            }
+
+            if (!selectedStatus.equals("All")) {
+                query += " AND status=?";
+            }
 
             PreparedStatement ps = con.prepareStatement(query);
 
-            if (!statusFilter.equals("All")) {
-                ps.setString(1, statusFilter);
+            int index = 1;
+
+            if (!selectedCategory.equals("All")) {
+                ps.setString(index++, selectedCategory);
+            }
+
+            if (!selectedStatus.equals("All")) {
+                ps.setString(index++, selectedStatus);
             }
 
             ResultSet rs = ps.executeQuery();
@@ -142,14 +173,14 @@ public class UpdateStatus extends JFrame {
 
             while (rs.next()) {
                 model.addRow(new Object[]{
-                        rs.getInt("id"),
-                        rs.getString("name"),
-                        rs.getString("issue"),
-                        rs.getString("location"),
-                        rs.getString("category"),
-                        rs.getString("status"),
-                        rs.getString("priority"),
-                        rs.getString("resolved_by")
+                    rs.getInt("id"),
+                    rs.getString("name"),
+                    rs.getString("issue"),
+                    rs.getString("location"),
+                    rs.getString("category"),
+                    rs.getString("status"),
+                    rs.getString("priority"),
+                    rs.getString("resolved_by")
                 });
             }
 
@@ -158,6 +189,7 @@ public class UpdateStatus extends JFrame {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
     }
 
     public void searchData(String keyword) {

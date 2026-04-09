@@ -116,6 +116,7 @@ public class ViewComplaints {
         card.add(locationLabel);
         card.add(statusLabel);
         card.add(deleteBtn);
+        card.add(new JLabel("Category: " + category));
 
         return card;
     }
@@ -139,6 +140,7 @@ public class ViewComplaints {
             while (rs.next()) {
 
                 String issue = rs.getString("issue");
+                String category = rs.getString("category");
                 String location = rs.getString("location");
                 String status = rs.getString("status");
 

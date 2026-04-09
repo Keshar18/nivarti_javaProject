@@ -20,7 +20,17 @@ public class UpdateStatus extends JFrame {
 
         // 🔥 TOP PANEL
         JPanel topPanel = new JPanel();
+        JComboBox<String> categoryFilter = new JComboBox<>(
+        	    new String[]{"All", "Road", "Water", "Electricity", "Garbage"}
+        	);
 
+        	topPanel.add(new JLabel("Category:"));
+        	topPanel.add(categoryFilter);
+
+        	categoryFilter.addActionListener(e -> {
+        	    loadData(categoryFilter.getSelectedItem().toString());
+        	});
+        	
         JTextField searchField = new JTextField(15);
         JButton searchBtn = new JButton("Search");
 
@@ -45,7 +55,7 @@ public class UpdateStatus extends JFrame {
         model = new DefaultTableModel(columns, 0);
         table = new JTable(model);
         
-        table.getColumnModel().getColumn(4).setCellRenderer(new DefaultTableCellRenderer() {
+        table.getColumnModel().getColumn(5).setCellRenderer(new DefaultTableCellRenderer() {
 
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value,

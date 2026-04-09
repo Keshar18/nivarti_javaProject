@@ -156,6 +156,14 @@ public class ViewComplaints {
                 ));
             }
 
+            
+            if (mainPanel.getComponentCount() == 0) {
+                JLabel empty = new JLabel("No complaints found 😌");
+                empty.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+                empty.setHorizontalAlignment(SwingConstants.CENTER);
+                mainPanel.add(empty);
+            }
+            
             mainPanel.revalidate();
             mainPanel.repaint();
 

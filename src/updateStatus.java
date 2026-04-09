@@ -59,6 +59,13 @@ public class UpdateStatus extends JFrame {
         model = new DefaultTableModel(columns, 0);
         table = new JTable(model);
         
+        table.setRowHeight(30);
+        table.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        table.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
+
+        table.getTableHeader().setBackground(new Color(58, 123, 213));
+        table.getTableHeader().setForeground(Color.WHITE);
+        
         table.getColumnModel().getColumn(5).setCellRenderer(new DefaultTableCellRenderer() {
 
             @Override
@@ -228,6 +235,8 @@ public class UpdateStatus extends JFrame {
     public void updateStatus() {
 
         int row = table.getSelectedRow();
+
+        
 
         if (row == -1) {
             JOptionPane.showMessageDialog(this, "Select a complaint first!");

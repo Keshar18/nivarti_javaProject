@@ -215,10 +215,22 @@ public class MainGUI {
         });
 
         logoutBtn.addActionListener(e -> {
-            Session.userEmail = null;
-            JOptionPane.showMessageDialog(null, "Logged out!");
-            cardLayout.show(mainPanel, "HOME");
-            refreshDashboard();
+        	logoutBtn.addActionListener(e -> {
+
+        	    int confirm = JOptionPane.showConfirmDialog(
+        	            null,
+        	            "Are you sure you want to logout?",
+        	            "Confirm Logout",
+        	            JOptionPane.YES_NO_OPTION
+        	    );
+
+        	    if (confirm == JOptionPane.YES_OPTION) {
+        	        Session.userEmail = null;
+        	        Session.role = null;
+
+        	        refreshDashboard();
+        	    }
+        	
         });
 
         // ================= ADD PANELS =================

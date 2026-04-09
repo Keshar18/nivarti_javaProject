@@ -41,7 +41,7 @@ public class UpdateStatus extends JFrame {
         add(topPanel, BorderLayout.NORTH);
 
         // 🔥 TABLE
-        String[] columns = {"ID", "Name", "Issue", "Location", "Status", "Priority", "Resolved By"};
+        String[] columns = {"ID", "Name", "Issue", "Location", "Category", "Status", "Priority", "Resolved By"};
         model = new DefaultTableModel(columns, 0);
         table = new JTable(model);
         
@@ -136,6 +136,7 @@ public class UpdateStatus extends JFrame {
                         rs.getString("name"),
                         rs.getString("issue"),
                         rs.getString("location"),
+                        rs.getString("category"),
                         rs.getString("status"),
                         rs.getString("priority"),
                         rs.getString("resolved_by")

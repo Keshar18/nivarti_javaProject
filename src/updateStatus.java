@@ -190,7 +190,7 @@ public class UpdateStatus extends JFrame {
             e.printStackTrace();
         }
     }
-    }
+    
 
     public void searchData(String keyword) {
         try {

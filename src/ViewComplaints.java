@@ -69,8 +69,9 @@ public class ViewComplaints {
 
     // CARD UI
     private static JPanel createCard(int id, String issue, String location, String status,
-                                     String priority, String resolved,
-                                     String createdDate, String resolvedDate) {
+            String priority, String resolved,
+            String createdDate, String resolvedDate,
+            String category)  {
 
         JPanel card = new JPanel();
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
@@ -145,15 +146,17 @@ public class ViewComplaints {
                 String status = rs.getString("status");
 
                 mainPanel.add(createCard(
-                        rs.getInt("id"),
-                        issue,
-                        location,
-                        status,
-                        rs.getString("priority"),
-                        rs.getString("resolved_by"),
-                        String.valueOf(rs.getTimestamp("created_at")),
-                        String.valueOf(rs.getTimestamp("resolved_at"))
-                ));
+                		
+                			    rs.getInt("id"),
+                			    issue,
+                			    location,
+                			    status,
+                			    rs.getString("priority"),
+                			    rs.getString("resolved_by"),
+                			    String.valueOf(rs.getTimestamp("created_at")),
+                			    String.valueOf(rs.getTimestamp("resolved_at")),
+                			    rs.getString("category") 
+                			));
             }
 
             

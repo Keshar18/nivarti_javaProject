@@ -151,58 +151,35 @@ public class UpdateStatus extends JFrame {
 
     public void loadData() {
         try {
+
+            System.out.println("📦 loadData STARTED");
+
             Connection con = DBConnection.getConnection();
-            
+
             if (con == null) {
-                System.out.println("DB NOT CONNECTED ❌");
+                System.out.println("❌ DB CONNECTION NULL");
                 return;
             }
 
-            String query = "SELECT * FROM complaints WHERE 1=1";
+            String query = "SELECT * FROM complaints";
 
-            if (!selectedCategory.equals("All")) {
-                query += " AND category=?";
-            }
-
-            if (!selectedStatus.equals("All")) {
-                query += " AND status=?";
-            }
+            System.out.println("🟡 Running query...");
 
             PreparedStatement ps = con.prepareStatement(query);
-
-            int index = 1;
-
-            if (!selectedCategory.equals("All")) {
-                ps.setString(index++, selectedCategory);
-            }
-
-            if (!selectedStatus.equals("All")) {
-                ps.setString(index++, selectedStatus);
-            }
-
             ResultSet rs = ps.executeQuery();
 
-            model.setRowCount(0);
+            System.out.println("📊 Fetching data...");
 
             while (rs.next()) {
-            	model.addRow(new Object[]{
-            		    rs.getInt("id"),
-            		    rs.getString("name"),
-            		    rs.getString("issue"),
-            		    rs.getString("location"),
-            		    rs.getString("category"),  
-            		    rs.getString("status"),
-            		    rs.getString("priority"),
-            		    rs.getString("resolved_by")
-            		});
+                // your data code
             }
 
-            updateStats();
-
         } catch (Exception e) {
+            System.out.println("❌ ERROR IN loadData()");
             e.printStackTrace();
         }
     }
+} 
     
 
     public void searchData(String keyword) {
@@ -214,7 +191,7 @@ public class UpdateStatus extends JFrame {
                 return;
             }
 
-            String query = "SELECT * FROM complaints WHERE name LIKE ? OR issue LIKE ?";
+            String query = "SELECT * FROM complaints WHERE issue LIKE ? OR location LIKE ?";
             PreparedStatement ps = con.prepareStatement(query);
 
             ps.setString(1, "%" + keyword + "%");

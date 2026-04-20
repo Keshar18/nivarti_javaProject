@@ -1,13 +1,16 @@
 import java.io.InputStream;
-import java.util.Properties;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.util.Properties;
 
 public class DBConnection {
 
     public static Connection getConnection() {
+        Connection con = null;
 
         try {
+            System.out.println("🔄 Trying DB connection...");
+
             Properties props = new Properties();
 
             InputStream input = DBConnection.class
@@ -15,7 +18,7 @@ public class DBConnection {
                     .getResourceAsStream("config.properties");
 
             if (input == null) {
-                System.out.println("config.properties NOT FOUND ❌");
+                System.out.println("❌ config.properties NOT FOUND");
                 return null;
             }
 
@@ -25,12 +28,22 @@ public class DBConnection {
             String user = props.getProperty("db.user");
             String pass = props.getProperty("db.password");
 
-            return DriverManager.getConnection(url, user, pass);
+            // 🔥 DRIVER LOAD (important)
+            Class.forName("com.mysql.cj.jdbc.Driver");
+
+            con = DriverManager.getConnection(url, user, pass);
+
+            if (con != null) {
+                System.out.println("✅ DB CONNECTED SUCCESSFULLY");
+            } else {
+                System.out.println("❌ DB CONNECTION FAILED");
+            }
 
         } catch (Exception e) {
+            System.out.println("❌ DB ERROR:");
             e.printStackTrace();
-            return null;
         }
-    } // method close
 
-} // class close ✅
+        return con;
+    }
+}

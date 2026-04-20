@@ -32,7 +32,8 @@ public class UpdateStatus extends JFrame {
         	topPanel.add(categoryFilter);
 
         	categoryFilter.addActionListener(e -> {
-        	    loadData(categoryFilter.getSelectedItem().toString());
+        	    selectedCategory = categoryFilter.getSelectedItem().toString();
+        	    loadData();
         	});
         	
         JTextField searchField = new JTextField(15);
@@ -115,10 +116,10 @@ public class UpdateStatus extends JFrame {
 
         add(bottomPanel, BorderLayout.SOUTH);
 
-        // 🔥 LOAD DATA
-        loadData("All");
+       
+        loadData();
 
-        // 🔥 FILTER
+       
         allBtn.addActionListener(e -> {
             selectedStatus = "All";
             loadData();
@@ -139,10 +140,10 @@ public class UpdateStatus extends JFrame {
             loadData();
         });
 
-        // 🔥 SEARCH
+       
         searchBtn.addActionListener(e -> searchData(searchField.getText()));
 
-        // 🔥 UPDATE
+      
         updateBtn.addActionListener(e -> updateStatus());
 
         setVisible(true);
@@ -151,6 +152,11 @@ public class UpdateStatus extends JFrame {
     public void loadData() {
         try {
             Connection con = DBConnection.getConnection();
+            
+            if (con == null) {
+                System.out.println("DB NOT CONNECTED ❌");
+                return;
+            }
 
             String query = "SELECT * FROM complaints WHERE 1=1";
 
@@ -179,16 +185,16 @@ public class UpdateStatus extends JFrame {
             model.setRowCount(0);
 
             while (rs.next()) {
-                model.addRow(new Object[]{
-                    rs.getInt("id"),
-                    rs.getString("name"),
-                    rs.getString("issue"),
-                    rs.getString("location"),
-                    rs.getString("category"),
-                    rs.getString("status"),
-                    rs.getString("priority"),
-                    rs.getString("resolved_by")
-                });
+            	model.addRow(new Object[]{
+            		    rs.getInt("id"),
+            		    rs.getString("name"),
+            		    rs.getString("issue"),
+            		    rs.getString("location"),
+            		    rs.getString("category"),  
+            		    rs.getString("status"),
+            		    rs.getString("priority"),
+            		    rs.getString("resolved_by")
+            		});
             }
 
             updateStats();
@@ -202,6 +208,11 @@ public class UpdateStatus extends JFrame {
     public void searchData(String keyword) {
         try {
             Connection con = DBConnection.getConnection();
+            
+            if (con == null) {
+                System.out.println("DB NOT CONNECTED ❌");
+                return;
+            }
 
             String query = "SELECT * FROM complaints WHERE name LIKE ? OR issue LIKE ?";
             PreparedStatement ps = con.prepareStatement(query);
@@ -219,6 +230,7 @@ public class UpdateStatus extends JFrame {
                         rs.getString("name"),
                         rs.getString("issue"),
                         rs.getString("location"),
+                        rs.getString("category"),
                         rs.getString("status"),
                         rs.getString("priority"),
                         rs.getString("resolved_by")
@@ -255,6 +267,11 @@ public class UpdateStatus extends JFrame {
         if (status != null && admin != null) {
             try {
                 Connection con = DBConnection.getConnection();
+                
+                if (con == null) {
+                    System.out.println("DB NOT CONNECTED ");
+                    return;
+                }
 
                 String query = "UPDATE complaints SET status=?, resolved_by=? WHERE id=?";
                 PreparedStatement ps = con.prepareStatement(query);
@@ -265,7 +282,7 @@ public class UpdateStatus extends JFrame {
 
                 ps.executeUpdate();
 
-                loadData("All");
+                SwingUtilities.invokeLater(() -> loadData());
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -279,7 +296,7 @@ public class UpdateStatus extends JFrame {
         int pending = 0, progress = 0, resolved = 0;
 
         for (int i = 0; i < total; i++) {
-            String status = model.getValueAt(i, 4).toString();
+            String status = model.getValueAt(i, 5).toString();
 
             if (status.equalsIgnoreCase("Pending")) pending++;
             else if (status.equalsIgnoreCase("In Progress")) progress++;

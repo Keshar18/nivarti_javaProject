@@ -207,7 +207,7 @@ public class MainGUI {
 
                 JOptionPane.showMessageDialog(null, "Admin Login Successful ✅");
 
-                new UpdateStatus(); // 🔥 OPEN ADMIN PANEL
+                new updateStatus(); // 🔥 OPEN ADMIN PANEL
 
             } else {
                 JOptionPane.showMessageDialog(null, "Invalid Admin Credentials ❌");

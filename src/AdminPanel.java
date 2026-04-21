@@ -31,6 +31,7 @@ public class AdminPanel extends JFrame {
 
         JButton approveBtn = new JButton("Approve ✅");
         JButton rejectBtn = new JButton("Reject ❌");
+        
 
         JPanel panel = new JPanel();
         panel.add(approveBtn);
@@ -42,8 +43,33 @@ public class AdminPanel extends JFrame {
         loadLeaderboard(leaderboard);
 
         // APPROVE
-        approveBtn.addActionListener(e -> updateStatus("Resolved"));
+        approveBtn.addActionListener(e -> {
+            int row = table.getSelectedRow();
 
+            if (row == -1) {
+                JOptionPane.showMessageDialog(this, "Select a complaint first!");
+                return;
+            }
+
+            int id = (int) model.getValueAt(row, 0);
+
+            try {
+                Connection con = DBConnection.getConnection();
+
+                String query = "UPDATE complaints SET status='Resolved' WHERE id=?";
+                PreparedStatement ps = con.prepareStatement(query);
+                ps.setInt(1, id);
+
+                ps.executeUpdate();
+
+                JOptionPane.showMessageDialog(this, "Approved Successfully ✅");
+
+                loadData(); // refresh
+
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
         // REJECT
         rejectBtn.addActionListener(e -> updateStatus("In Progress"));
 

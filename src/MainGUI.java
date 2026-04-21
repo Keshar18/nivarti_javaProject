@@ -74,6 +74,10 @@ public class MainGUI {
         loginPanel.add(userLoginBtn);
         loginPanel.add(Box.createRigidArea(new Dimension(20, 0)));
         loginPanel.add(adminLoginBtn);
+        
+        loginPanel.add(Box.createRigidArea(new Dimension(20, 0)));
+        authorityLoginBtn = new JButton("Authority Login");
+        loginPanel.add(authorityLoginBtn);
 
         homePanel.add(loginPanel);
         homePanel.add(Box.createRigidArea(new Dimension(0, 15)));
@@ -195,6 +199,8 @@ public class MainGUI {
         });
 
         userLoginBtn.addActionListener(e -> cardLayout.show(mainPanel, "LOGIN"));
+        
+        authorityLoginBtn.addActionListener(e -> new AuthorityPanel());
 
         adminLoginBtn.addActionListener(e -> {
 

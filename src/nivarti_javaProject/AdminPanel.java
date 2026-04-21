@@ -19,7 +19,7 @@ public class AdminPanel extends JFrame {
         table = new JTable(model);
 
         model.setColumnIdentifiers(new String[]{
-                "ID", "Name", "Issue", "Location", "Status", "Resolved By"
+                "ID", "Name", "Issue", "Location", "Status", "Resolved By", "Badge"
         });
 
         add(new JScrollPane(table), BorderLayout.CENTER);
@@ -55,13 +55,18 @@ public class AdminPanel extends JFrame {
             model.setRowCount(0);
 
             while (rs.next()) {
+            	  String name = rs.getString("resolved_by");   
+            	    String badge = getBadge(name);  
+            	    
                 model.addRow(new Object[]{
-                        rs.getInt("id"),
-                        rs.getString("name"),
-                        rs.getString("issue"),
-                        rs.getString("location"),
-                        rs.getString("status"),
-                        rs.getString("resolved_by")
+                		  rs.getInt("id"),
+                	        rs.getString("name"),
+                	        rs.getString("issue"),
+                	        rs.getString("location"),
+                	        rs.getString("status"),
+                	        name,
+                	        badge 
+                        
                 });
             }
 
@@ -96,5 +101,32 @@ public class AdminPanel extends JFrame {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    
+    String getBadge(String name) {
+
+        int count = 0;
+
+        try {
+            Connection con = DBConnection.getConnection();
+
+            String query = "SELECT COUNT(*) FROM complaints WHERE resolved_by=? AND status='Resolved'";
+            PreparedStatement ps = con.prepareStatement(query);
+
+            ps.setString(1, name);
+
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                count = rs.getInt(1);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if (count <= 5) return "🥉 Bronze";
+        else if (count <= 15) return "🥈 Silver";
+        else return "🥇 Gold";
     }
 }

@@ -160,6 +160,7 @@ public class updateStatus extends JFrame {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        updateStats();
     }
 
     // 🔥 SEARCH
@@ -230,8 +231,10 @@ public class updateStatus extends JFrame {
                 ps.setInt(3, id);
 
                 ps.executeUpdate();
+                
 
                 loadData();
+                updateStats();
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -242,21 +245,32 @@ public class updateStatus extends JFrame {
     // 🔥 STATS
     public void updateStats() {
 
-        int total = model.getRowCount();
-        int pending = 0, progress = 0, resolved = 0;
+        try {
+            Connection con = DBConnection.getConnection();
 
-        for (int i = 0; i < total; i++) {
-            String status = model.getValueAt(i, 5).toString();
+            String totalQ = "SELECT COUNT(*) FROM complaints";
+            String pendingQ = "SELECT COUNT(*) FROM complaints WHERE status='Pending'";
+            String progressQ = "SELECT COUNT(*) FROM complaints WHERE status='In Progress'";
+            String resolvedQ = "SELECT COUNT(*) FROM complaints WHERE status='Resolved'";
 
-            if (status.equalsIgnoreCase("Pending")) pending++;
-            else if (status.equalsIgnoreCase("In Progress")) progress++;
-            else if (status.equalsIgnoreCase("Resolved")) resolved++;
+            PreparedStatement ps1 = con.prepareStatement(totalQ);
+            PreparedStatement ps2 = con.prepareStatement(pendingQ);
+            PreparedStatement ps3 = con.prepareStatement(progressQ);
+            PreparedStatement ps4 = con.prepareStatement(resolvedQ);
+
+            ResultSet r1 = ps1.executeQuery();
+            ResultSet r2 = ps2.executeQuery();
+            ResultSet r3 = ps3.executeQuery();
+            ResultSet r4 = ps4.executeQuery();
+
+            if (r1.next()) totalLabel.setText("Total: " + r1.getInt(1));
+            if (r2.next()) pendingLabel.setText("Pending: " + r2.getInt(1));
+            if (r3.next()) progressLabel.setText("In Progress: " + r3.getInt(1));
+            if (r4.next()) resolvedLabel.setText("Resolved: " + r4.getInt(1));
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
-        totalLabel.setText("Total: " + total);
-        pendingLabel.setText("Pending: " + pending);
-        progressLabel.setText("In Progress: " + progress);
-        resolvedLabel.setText("Resolved: " + resolved);
     }
-}
-
+}    
+    

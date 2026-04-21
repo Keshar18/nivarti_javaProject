@@ -136,7 +136,12 @@ public class updateStatus extends JFrame {
                 return;
             }
 
-            String query = "SELECT * FROM complaints";
+            String query = "SELECT * FROM complaints " +
+                    "ORDER BY CASE " +
+                    "WHEN priority='High' THEN 1 " +
+                    "WHEN priority='Medium' THEN 2 " +
+                    "WHEN priority='Low' THEN 3 " +
+                    "ELSE 4 END";
             PreparedStatement ps = con.prepareStatement(query);
             ResultSet rs = ps.executeQuery();
 

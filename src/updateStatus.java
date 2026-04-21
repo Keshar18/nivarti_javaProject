@@ -211,6 +211,8 @@ public class updateStatus extends JFrame {
         }
 
         int id = (int) model.getValueAt(row, 0);
+        String issue = model.getValueAt(row, 2).toString();
+        String priority = getPriority(issue);
 
         String[] options = {"Pending", "In Progress", "Resolved (Pending)"};
         String status = "Resolved (Pending)";
@@ -223,12 +225,13 @@ public class updateStatus extends JFrame {
 
                 if (con == null) return;
 
-                String query = "UPDATE complaints SET status=?, resolved_by=? WHERE id=?";
+                String query = "UPDATE complaints SET status=?, resolved_by=?, priority=? WHERE id=?";
                 PreparedStatement ps = con.prepareStatement(query);
 
                 ps.setString(1, status);
                 ps.setString(2, admin);
-                ps.setInt(3, id);
+                ps.setString(3, priority);
+                ps.setInt(4, id);
 
                 ps.executeUpdate();
                 
@@ -271,6 +274,22 @@ public class updateStatus extends JFrame {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    String getPriority(String issue) {
+
+        issue = issue.toLowerCase();
+
+        if (issue.contains("road") || issue.contains("accident") || issue.contains("hole")) {
+            return "High";
+        } 
+        else if (issue.contains("water") || issue.contains("leak")) {
+            return "Medium";
+        } 
+        else if (issue.contains("garbage") || issue.contains("waste")) {
+            return "Low";
+        }
+
+        return "Normal";
     }
 }    
     

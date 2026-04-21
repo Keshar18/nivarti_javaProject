@@ -23,6 +23,11 @@ public class AdminPanel extends JFrame {
         });
 
         add(new JScrollPane(table), BorderLayout.CENTER);
+        
+        JTextArea leaderboard = new JTextArea(10, 20);
+        leaderboard.setEditable(false);
+
+        add(new JScrollPane(leaderboard), BorderLayout.EAST);
 
         JButton approveBtn = new JButton("Approve ✅");
         JButton rejectBtn = new JButton("Reject ❌");

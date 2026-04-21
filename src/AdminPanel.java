@@ -60,6 +60,8 @@ public class AdminPanel extends JFrame {
                     "WHEN priority='Medium' THEN 2 " +
                     "WHEN priority='Low' THEN 3 " +
                     "ELSE 4 END";
+            
+            
             PreparedStatement ps = con.prepareStatement(query);
             ResultSet rs = ps.executeQuery();
 

@@ -6,7 +6,7 @@ import java.sql.PreparedStatement;
 public class MainGUI {
 
     //  GLOBAL VARIABLES (IMPORTANT)
-    static JButton reportBtn, myBtn, userLoginBtn, adminLoginBtn, logoutBtn;
+	static JButton reportBtn, myBtn, userLoginBtn, adminLoginBtn, authorityLoginBtn, logoutBtn;
     static JLabel welcomeLabel;
 
     public static void main(String[] args) {
@@ -43,7 +43,9 @@ public class MainGUI {
         myBtn = new JButton("My Complaints");
         userLoginBtn = new JButton("User Login");
         adminLoginBtn = new JButton("Admin Login");
+        authorityLoginBtn = new JButton("Authority Login");
         logoutBtn = new JButton("Logout");
+        
 
         Dimension btnSize = new Dimension(200, 45);
 

@@ -39,6 +39,7 @@ public class AdminPanel extends JFrame {
         add(panel, BorderLayout.SOUTH);
 
         loadData();
+        loadLeaderboard(leaderboard);
 
         // APPROVE
         approveBtn.addActionListener(e -> updateStatus("Resolved"));
@@ -133,5 +134,40 @@ public class AdminPanel extends JFrame {
         if (count <= 5) return "🥉 Bronze";
         else if (count <= 15) return "🥈 Silver";
         else return "🥇 Gold";
+    }
+    
+    void loadLeaderboard(JTextArea leaderboard) {
+
+        try {
+            Connection con = DBConnection.getConnection();
+
+            String query = "SELECT resolved_by, COUNT(*) as total FROM complaints WHERE status='Resolved' GROUP BY resolved_by ORDER BY total DESC LIMIT 3";
+
+            PreparedStatement ps = con.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();
+
+            StringBuilder sb = new StringBuilder("🏆 Top Performers\n\n");
+
+            int rank = 1;
+
+            while (rs.next()) {
+
+                String name = rs.getString("resolved_by");
+                int count = rs.getInt("total");
+
+                if (rank == 1) sb.append("🥇 ");
+                else if (rank == 2) sb.append("🥈 ");
+                else sb.append("🥉 ");
+
+                sb.append(name + " - " + count + " resolved\n");
+
+                rank++;
+            }
+
+            leaderboard.setText(sb.toString());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

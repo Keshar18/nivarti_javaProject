@@ -44,53 +44,43 @@ public class MainGUI {
         adminLoginBtn = new JButton("Admin Login");
         authorityLoginBtn = new JButton("Authority Login");
         logoutBtn = new JButton("Logout");
-        
-        JPanel btnPanel = new JPanel();
-        btnPanel.setBackground(new Color(58, 110, 180));
-        btnPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 10));
-
-        btnPanel.add(userLoginBtn);
-        btnPanel.add(adminLoginBtn);
-        btnPanel.add(authorityLoginBtn);
 
         Dimension btnSize = new Dimension(200, 45);
 
-        for (JButton btn : new JButton[]{reportBtn, myBtn, userLoginBtn, adminLoginBtn, logoutBtn}) {
+        for (JButton btn : new JButton[]{
+                reportBtn, myBtn, userLoginBtn, adminLoginBtn, authorityLoginBtn, logoutBtn
+        }) {
             btn.setMaximumSize(btnSize);
             btn.setAlignmentX(Component.CENTER_ALIGNMENT);
             btn.setBackground(Color.WHITE);
             btn.setFocusPainted(false);
         }
-        
-    
 
         homePanel.add(Box.createVerticalGlue());
         homePanel.add(heading);
         homePanel.add(Box.createRigidArea(new Dimension(0, 10)));
         homePanel.add(sub);
-        
+        homePanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        homePanel.add(welcomeLabel);
         homePanel.add(Box.createRigidArea(new Dimension(0, 30)));
-        homePanel.add(btnPanel);
 
-       
-
-        JPanel loginPanel = new JPanel();
-        loginPanel.setOpaque(false);
-        loginPanel.add(userLoginBtn);
-        loginPanel.add(Box.createRigidArea(new Dimension(20, 0)));
-        loginPanel.add(adminLoginBtn);
-
-        loginPanel.add(Box.createRigidArea(new Dimension(20, 0)));
+        homePanel.add(reportBtn);
         homePanel.add(Box.createRigidArea(new Dimension(0, 15)));
 
-        authorityLoginBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
-        authorityLoginBtn.setMaximumSize(new Dimension(200, 45));
-        authorityLoginBtn.setBackground(Color.WHITE);
+        homePanel.add(myBtn);
+        homePanel.add(Box.createRigidArea(new Dimension(0, 20)));
 
-        homePanel.add(authorityLoginBtn);
+        // ✅ LOGIN PANEL (FINAL FIX)
+        JPanel loginPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+        loginPanel.setOpaque(false);
+
+        loginPanel.add(userLoginBtn);
+        loginPanel.add(adminLoginBtn);
+        loginPanel.add(authorityLoginBtn);
 
         homePanel.add(loginPanel);
         homePanel.add(Box.createRigidArea(new Dimension(0, 15)));
+
         homePanel.add(logoutBtn);
         homePanel.add(Box.createVerticalGlue());
 
@@ -118,25 +108,18 @@ public class MainGUI {
 
         JComboBox<String> categoryBox = new JComboBox<>(
                 new String[]{"Road", "Water", "Electricity", "Garbage", "Other"}
-                
         );
+
         categoryBox.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         categoryBox.setMaximumSize(new Dimension(320, 40));
         categoryBox.setAlignmentX(Component.CENTER_ALIGNMENT);
-        
-        categoryBox.setMaximumSize(new Dimension(320, 40));
-        categoryBox.setPreferredSize(new Dimension(320, 40));
-        
-        Dimension fieldSize = new Dimension(320, 40);
 
         for (JTextField field : new JTextField[]{issueField, locationField}) {
-        	categoryBox.setAlignmentX(Component.CENTER_ALIGNMENT);
-        	issueField.setAlignmentX(Component.CENTER_ALIGNMENT);
-        	locationField.setAlignmentX(Component.CENTER_ALIGNMENT);
-        	field.setMaximumSize(new Dimension(320, 45));
-        	field.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+            field.setMaximumSize(new Dimension(320, 45));
+            field.setFont(new Font("Segoe UI", Font.PLAIN, 14));
             field.setBackground(new Color(245, 247, 250));
             field.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200)));
+            field.setAlignmentX(Component.CENTER_ALIGNMENT);
         }
 
         JButton submitBtn = new JButton("Submit");
@@ -237,6 +220,8 @@ public class MainGUI {
         });
 
         userLoginBtn.addActionListener(e -> cardLayout.show(mainPanel, "LOGIN"));
+
+        adminLoginBtn.addActionListener(e -> cardLayout.show(mainPanel, "LOGIN"));
 
         authorityLoginBtn.addActionListener(e -> {
             String name = JOptionPane.showInputDialog("Enter Authority Name");

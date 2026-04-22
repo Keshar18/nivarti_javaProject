@@ -1,4 +1,5 @@
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.sql.*;
 
@@ -17,7 +18,7 @@ public class AuthorityDashboard extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
-        // TOP PANEL
+        // 🔹 TOP PANEL
         JPanel top = new JPanel(new GridLayout(1, 3));
 
         nameLabel = new JLabel("Name: " + authorityName);
@@ -30,25 +31,66 @@ public class AuthorityDashboard extends JFrame {
 
         add(top, BorderLayout.NORTH);
 
-        // TABLE
+        // 🔹 TABLE
         model = new DefaultTableModel(new String[]{
                 "ID", "Issue", "Status"
         }, 0);
 
-        table = new JTable(model);
-        add(new JScrollPane(table), BorderLayout.CENTER);
+        JPanel cardPanel = new JPanel();
+        cardPanel.setLayout(new BoxLayout(cardPanel, BoxLayout.Y_AXIS));
+
+        JScrollPane scrollPane = new JScrollPane(cardPanel);
+        add(scrollPane, BorderLayout.CENTER);
+        JButton resolveBtn = new JButton("Resolve Complaint");
+        add(resolveBtn, BorderLayout.SOUTH);
 
         loadData();
+        resolveBtn.addActionListener(e -> {
 
+            int row = table.getSelectedRow();
+
+            if (row == -1) {
+                JOptionPane.showMessageDialog(this, "Select a complaint first!");
+                return;
+            }
+
+            int id = (int) model.getValueAt(row, 0);
+
+            try {
+                Connection con = DBConnection.getConnection();
+
+                String query = "UPDATE complaints SET status='Resolved (Pending)', resolved_by=? WHERE id=?";
+                PreparedStatement ps = con.prepareStatement(query);
+
+                ps.setString(1, authorityName);
+                ps.setInt(2, id);
+
+                ps.executeUpdate();
+
+                JOptionPane.showMessageDialog(this, "Marked as Resolved");
+
+                loadData();
+
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
         setVisible(true);
     }
+
+    // 🔹 LOAD DATA
     void loadData() {
         try {
             Connection con = DBConnection.getConnection();
 
-            String query = "SELECT id, issue, status FROM complaints WHERE resolved_by=?";
+            if (con == null) {
+                System.out.println("DB NOT CONNECTED ❌");
+                return;
+            }
+
+            String query = "SELECT id, issue, status FROM complaints WHERE status='Pending'";
             PreparedStatement ps = con.prepareStatement(query);
-            ps.setString(1, authorityName);
+           
 
             ResultSet rs = ps.executeQuery();
 
@@ -57,13 +99,15 @@ public class AuthorityDashboard extends JFrame {
             int count = 0;
 
             while (rs.next()) {
+                String status = rs.getString("status");
+
                 model.addRow(new Object[]{
                         rs.getInt("id"),
                         rs.getString("issue"),
-                        rs.getString("status")
+                        status
                 });
 
-                if (rs.getString("status").equals("Resolved")) {
+                if (status.contains("Resolved")) {
                     count++;
                 }
             }
@@ -75,6 +119,8 @@ public class AuthorityDashboard extends JFrame {
             e.printStackTrace();
         }
     }
+
+    // 🔹 BADGE LOGIC
     String getBadge(int count) {
         if (count >= 10) return "🏆 Gold";
         else if (count >= 5) return "🥈 Silver";

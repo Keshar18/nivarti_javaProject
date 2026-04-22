@@ -3,13 +3,18 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.sql.*;
 
+
+
 public class AuthorityPanel extends JFrame {
+	
 
     JTable table;
     DefaultTableModel model;
 
     public AuthorityPanel() {
 
+    	System.out.println("🚀 Authority Panel opened");
+    	
         setTitle("Authority Panel");
         setSize(900, 500);
         setLocationRelativeTo(null);

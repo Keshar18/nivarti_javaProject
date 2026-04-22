@@ -3,9 +3,13 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.Properties;
 
+
 public class DBConnection {
+	
 
     public static Connection getConnection() {
+    	System.out.println("🚀 Trying DB connection...");
+    	
         Connection con = null;
 
         try {

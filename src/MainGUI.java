@@ -47,9 +47,7 @@ public class MainGUI {
 
         Dimension btnSize = new Dimension(200, 45);
 
-        for (JButton btn : new JButton[]{
-                reportBtn, myBtn, userLoginBtn, adminLoginBtn, authorityLoginBtn, logoutBtn
-        }) {
+        for (JButton btn : new JButton[]{reportBtn, myBtn, userLoginBtn, adminLoginBtn, logoutBtn}) {
             btn.setMaximumSize(btnSize);
             btn.setAlignmentX(Component.CENTER_ALIGNMENT);
             btn.setBackground(Color.WHITE);
@@ -66,11 +64,21 @@ public class MainGUI {
 
         homePanel.add(reportBtn);
         homePanel.add(Box.createRigidArea(new Dimension(0, 15)));
-
+        
         homePanel.add(myBtn);
         homePanel.add(Box.createRigidArea(new Dimension(0, 20)));
 
-        // ✅ LOGIN PANEL (FINAL FIX)
+     
+
+        JPanel loginPanel = new JPanel();
+        loginPanel.setOpaque(false);
+        loginPanel.add(userLoginBtn);
+        loginPanel.add(Box.createRigidArea(new Dimension(20, 0)));
+        loginPanel.add(adminLoginBtn);
+
+        loginPanel.add(Box.createRigidArea(new Dimension(20, 0)));
+        homePanel.add(Box.createRigidArea(new Dimension(0, 15)));
+
         JPanel loginPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         loginPanel.setOpaque(false);
 
@@ -78,9 +86,10 @@ public class MainGUI {
         loginPanel.add(adminLoginBtn);
         loginPanel.add(authorityLoginBtn);
 
+      
+
         homePanel.add(loginPanel);
         homePanel.add(Box.createRigidArea(new Dimension(0, 15)));
-
         homePanel.add(logoutBtn);
         homePanel.add(Box.createVerticalGlue());
 
@@ -108,18 +117,25 @@ public class MainGUI {
 
         JComboBox<String> categoryBox = new JComboBox<>(
                 new String[]{"Road", "Water", "Electricity", "Garbage", "Other"}
+                
         );
-
         categoryBox.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         categoryBox.setMaximumSize(new Dimension(320, 40));
         categoryBox.setAlignmentX(Component.CENTER_ALIGNMENT);
+        
+        categoryBox.setMaximumSize(new Dimension(320, 40));
+        categoryBox.setPreferredSize(new Dimension(320, 40));
+        
+        Dimension fieldSize = new Dimension(320, 40);
 
         for (JTextField field : new JTextField[]{issueField, locationField}) {
-            field.setMaximumSize(new Dimension(320, 45));
-            field.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        	categoryBox.setAlignmentX(Component.CENTER_ALIGNMENT);
+        	issueField.setAlignmentX(Component.CENTER_ALIGNMENT);
+        	locationField.setAlignmentX(Component.CENTER_ALIGNMENT);
+        	field.setMaximumSize(new Dimension(320, 45));
+        	field.setFont(new Font("Segoe UI", Font.PLAIN, 14));
             field.setBackground(new Color(245, 247, 250));
             field.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200)));
-            field.setAlignmentX(Component.CENTER_ALIGNMENT);
         }
 
         JButton submitBtn = new JButton("Submit");
@@ -219,16 +235,8 @@ public class MainGUI {
             cardLayout.show(mainPanel, "MY");
         });
 
-        userLoginBtn.addActionListener(e -> {
-            Session.role = "user";
-            cardLayout.show(mainPanel, "LOGIN");
-        });
+        userLoginBtn.addActionListener(e -> cardLayout.show(mainPanel, "LOGIN"));
 
-        adminLoginBtn.addActionListener(e -> {
-            Session.role = "admin";
-            cardLayout.show(mainPanel, "LOGIN");
-        });
-        
         authorityLoginBtn.addActionListener(e -> {
             String name = JOptionPane.showInputDialog("Enter Authority Name");
             if (name != null && !name.isEmpty()) {
@@ -245,7 +253,8 @@ public class MainGUI {
         mainPanel.add(homePanel, "HOME");
         mainPanel.add(addPanel, "ADD");
         mainPanel.add(myPanel, "MY");
-        new LoginPage();
+        mainPanel.add(LoginPage.createPanel(cardLayout, mainPanel), "LOGIN");
+
         frame.add(mainPanel);
         frame.setVisible(true);
 

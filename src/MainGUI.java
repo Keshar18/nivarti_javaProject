@@ -44,6 +44,14 @@ public class MainGUI {
         adminLoginBtn = new JButton("Admin Login");
         authorityLoginBtn = new JButton("Authority Login");
         logoutBtn = new JButton("Logout");
+        
+        JPanel btnPanel = new JPanel();
+        btnPanel.setBackground(new Color(58, 110, 180));
+        btnPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 10));
+
+        btnPanel.add(userLoginBtn);
+        btnPanel.add(adminLoginBtn);
+        btnPanel.add(authorityLoginBtn);
 
         Dimension btnSize = new Dimension(200, 45);
 
@@ -53,19 +61,18 @@ public class MainGUI {
             btn.setBackground(Color.WHITE);
             btn.setFocusPainted(false);
         }
+        
+    
 
         homePanel.add(Box.createVerticalGlue());
         homePanel.add(heading);
         homePanel.add(Box.createRigidArea(new Dimension(0, 10)));
         homePanel.add(sub);
-        homePanel.add(Box.createRigidArea(new Dimension(0, 10)));
-        homePanel.add(welcomeLabel);
+        
         homePanel.add(Box.createRigidArea(new Dimension(0, 30)));
+        homePanel.add(btnPanel);
 
-        homePanel.add(reportBtn);
-        homePanel.add(Box.createRigidArea(new Dimension(0, 15)));
-        homePanel.add(myBtn);
-        homePanel.add(Box.createRigidArea(new Dimension(0, 20)));
+       
 
         JPanel loginPanel = new JPanel();
         loginPanel.setOpaque(false);

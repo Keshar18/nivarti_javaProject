@@ -37,18 +37,24 @@ public class ViewComplaints {
 
         panel.add(topPanel, BorderLayout.BEFORE_FIRST_LINE);
 
-        // MAIN PANEL
-        mainPanel = new JPanel(new GridLayout(0, 2, 20, 20));
+        // ✅ UPDATED MAIN PANEL (3 CARDS PER ROW)
+        mainPanel = new JPanel(new GridLayout(0, 3, 20, 20));
         mainPanel.setBackground(new Color(240, 244, 250));
 
-        JScrollPane scrollPane = new JScrollPane(mainPanel);
+        // ✅ SCROLL FIX (cards stretch na ho)
+        JPanel wrapper = new JPanel(new BorderLayout());
+        wrapper.add(mainPanel, BorderLayout.NORTH);
+
+        JScrollPane scrollPane = new JScrollPane(wrapper);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         panel.add(scrollPane, BorderLayout.CENTER);
 
         // BACK BUTTON
         JButton backBtn = new JButton("← Back");
         backBtn.addActionListener(e -> {
             cardLayout.show(parentPanel, "HOME");
-            MainGUI.refreshDashboard(); // 🔥 important
+            MainGUI.refreshDashboard();
         });
         panel.add(backBtn, BorderLayout.SOUTH);
 
@@ -67,7 +73,7 @@ public class ViewComplaints {
         return panel;
     }
 
-    // CARD UI
+    // ✅ CARD UI UPDATED
     private static JPanel createCard(int id, String issue, String location, String status,
             String priority, String resolved,
             String createdDate, String resolvedDate,
@@ -76,17 +82,27 @@ public class ViewComplaints {
         JPanel card = new JPanel();
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
         card.setBackground(Color.WHITE);
-        card.setPreferredSize(new Dimension(280, 180));
 
-        card.setBorder(BorderFactory.createLineBorder(new Color(220, 220, 220)));
+        // ✅ SIZE + PADDING FIX
+        card.setPreferredSize(new Dimension(300, 200));
+        card.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(220, 220, 220)),
+                BorderFactory.createEmptyBorder(15, 15, 15, 15)
+        ));
 
+        // ✅ BIGGER FONT
         JLabel issueLabel = new JLabel(issue);
         issueLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        issueLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         JLabel locationLabel = new JLabel("📍 " + location);
+        locationLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        locationLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
         JLabel statusLabel = new JLabel(status);
         statusLabel.setOpaque(true);
         statusLabel.setForeground(Color.WHITE);
+        statusLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         if (status.equalsIgnoreCase("Pending"))
             statusLabel.setBackground(new Color(255, 193, 7));
@@ -96,6 +112,7 @@ public class ViewComplaints {
             statusLabel.setBackground(new Color(76, 175, 80));
 
         JButton deleteBtn = new JButton("Delete");
+        deleteBtn.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         deleteBtn.addActionListener(e -> {
             try {
@@ -106,18 +123,27 @@ public class ViewComplaints {
                 ps.setInt(1, id);
                 ps.executeUpdate();
 
-                loadData(Session.userEmail); // ✅ FIXED
+                loadData(Session.userEmail);
 
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
         });
 
+        JLabel categoryLabel = new JLabel("Category: " + category);
+        categoryLabel.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        categoryLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        // ADD COMPONENTS
         card.add(issueLabel);
+        card.add(Box.createRigidArea(new Dimension(0, 5)));
         card.add(locationLabel);
+        card.add(Box.createRigidArea(new Dimension(0, 5)));
         card.add(statusLabel);
+        card.add(Box.createRigidArea(new Dimension(0, 10)));
         card.add(deleteBtn);
-        card.add(new JLabel("Category: " + category));
+        card.add(Box.createRigidArea(new Dimension(0, 5)));
+        card.add(categoryLabel);
 
         return card;
     }
@@ -146,27 +172,25 @@ public class ViewComplaints {
                 String status = rs.getString("status");
 
                 mainPanel.add(createCard(
-                		
-                			    rs.getInt("id"),
-                			    issue,
-                			    location,
-                			    status,
-                			    rs.getString("priority"),
-                			    rs.getString("resolved_by"),
-                			    String.valueOf(rs.getTimestamp("created_at")),
-                			    String.valueOf(rs.getTimestamp("resolved_at")),
-                			    rs.getString("category") 
-                			));
+                        rs.getInt("id"),
+                        issue,
+                        location,
+                        status,
+                        rs.getString("priority"),
+                        rs.getString("resolved_by"),
+                        String.valueOf(rs.getTimestamp("created_at")),
+                        String.valueOf(rs.getTimestamp("resolved_at")),
+                        category
+                ));
             }
 
-            
             if (mainPanel.getComponentCount() == 0) {
                 JLabel empty = new JLabel("No complaints found 😌");
                 empty.setFont(new Font("Segoe UI", Font.PLAIN, 16));
                 empty.setHorizontalAlignment(SwingConstants.CENTER);
                 mainPanel.add(empty);
             }
-            
+
             mainPanel.revalidate();
             mainPanel.repaint();
 

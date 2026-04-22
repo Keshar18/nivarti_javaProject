@@ -219,10 +219,16 @@ public class MainGUI {
             cardLayout.show(mainPanel, "MY");
         });
 
-        userLoginBtn.addActionListener(e -> cardLayout.show(mainPanel, "LOGIN"));
+        userLoginBtn.addActionListener(e -> {
+            Session.role = "user";
+            cardLayout.show(mainPanel, "LOGIN");
+        });
 
-        adminLoginBtn.addActionListener(e -> cardLayout.show(mainPanel, "LOGIN"));
-
+        adminLoginBtn.addActionListener(e -> {
+            Session.role = "admin";
+            cardLayout.show(mainPanel, "LOGIN");
+        });
+        
         authorityLoginBtn.addActionListener(e -> {
             String name = JOptionPane.showInputDialog("Enter Authority Name");
             if (name != null && !name.isEmpty()) {
@@ -239,8 +245,7 @@ public class MainGUI {
         mainPanel.add(homePanel, "HOME");
         mainPanel.add(addPanel, "ADD");
         mainPanel.add(myPanel, "MY");
-        mainPanel.add(LoginPage.createPanel(cardLayout, mainPanel), "LOGIN");
-
+        new LoginPage();
         frame.add(mainPanel);
         frame.setVisible(true);
 

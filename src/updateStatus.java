@@ -216,7 +216,9 @@ public class updateStatus extends JFrame {
         }
 
         int id = (int) model.getValueAt(row, 0);
+        
         String issue = model.getValueAt(row, 2).toString();
+        String category = model.getValueAt(row, 4).toString();
         String priority = getPriority(issue);
 
         String[] options = {"Pending", "In Progress", "Resolved (Pending)"};
@@ -291,6 +293,25 @@ public class updateStatus extends JFrame {
             return "Medium";
         } 
         else if (issue.contains("garbage") || issue.contains("waste")) {
+            return "Low";
+        }
+
+        return "Normal";
+    }
+    String getPriority(String issue, String category) {
+
+        issue = issue.toLowerCase();
+        category = category.toLowerCase();
+
+        if (category.contains("road") || issue.contains("accident") || issue.contains("hole")) {
+            return "High";
+        }
+
+        if (category.contains("water") || issue.contains("leak") || issue.contains("pipe")) {
+            return "Medium";
+        }
+
+        if (category.contains("garbage") || issue.contains("waste") || issue.contains("dirty")) {
             return "Low";
         }
 

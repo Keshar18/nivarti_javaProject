@@ -5,8 +5,7 @@ import java.sql.PreparedStatement;
 
 public class MainGUI {
 
-    //  GLOBAL VARIABLES (IMPORTANT)
-	static JButton reportBtn, myBtn, userLoginBtn, adminLoginBtn, authorityLoginBtn, logoutBtn;
+    static JButton reportBtn, myBtn, userLoginBtn, adminLoginBtn, authorityLoginBtn, logoutBtn;
     static JLabel welcomeLabel;
 
     public static void main(String[] args) {
@@ -45,7 +44,6 @@ public class MainGUI {
         adminLoginBtn = new JButton("Admin Login");
         authorityLoginBtn = new JButton("Authority Login");
         logoutBtn = new JButton("Logout");
-        
 
         Dimension btnSize = new Dimension(200, 45);
 
@@ -74,10 +72,15 @@ public class MainGUI {
         loginPanel.add(userLoginBtn);
         loginPanel.add(Box.createRigidArea(new Dimension(20, 0)));
         loginPanel.add(adminLoginBtn);
-        
+
         loginPanel.add(Box.createRigidArea(new Dimension(20, 0)));
-        authorityLoginBtn = new JButton("Authority Login");
-        loginPanel.add(authorityLoginBtn);
+        homePanel.add(Box.createRigidArea(new Dimension(0, 15)));
+
+        authorityLoginBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
+        authorityLoginBtn.setMaximumSize(new Dimension(200, 45));
+        authorityLoginBtn.setBackground(Color.WHITE);
+
+        homePanel.add(authorityLoginBtn);
 
         homePanel.add(loginPanel);
         homePanel.add(Box.createRigidArea(new Dimension(0, 15)));
@@ -92,24 +95,39 @@ public class MainGUI {
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
         card.setBackground(Color.WHITE);
         card.setBorder(BorderFactory.createEmptyBorder(25, 30, 25, 30));
-        card.setPreferredSize(new Dimension(350, 400));
+        card.setPreferredSize(new Dimension(350, 420));
 
         JLabel title = new JLabel("Add Complaint");
         title.setFont(new Font("Segoe UI", Font.BOLD, 18));
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
 
+        JLabel issueLabel = new JLabel("Enter Complaint:");
         JTextField issueField = new JTextField();
-        JTextField locationField = new JTextField();
-        
-        JComboBox<String> categoryBox = new JComboBox<>(
-        	    new String[]{"Road", "Water", "Electricity", "Garbage"}
-        	);
-        	categoryBox.setMaximumSize(new Dimension(320, 40));
 
+        JLabel locationLabel = new JLabel("Enter Location:");
+        JTextField locationField = new JTextField();
+
+        JLabel categoryLabel = new JLabel("Category:");
+
+        JComboBox<String> categoryBox = new JComboBox<>(
+                new String[]{"Road", "Water", "Electricity", "Garbage", "Other"}
+                
+        );
+        categoryBox.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        categoryBox.setMaximumSize(new Dimension(320, 40));
+        categoryBox.setAlignmentX(Component.CENTER_ALIGNMENT);
+        
+        categoryBox.setMaximumSize(new Dimension(320, 40));
+        categoryBox.setPreferredSize(new Dimension(320, 40));
+        
         Dimension fieldSize = new Dimension(320, 40);
 
         for (JTextField field : new JTextField[]{issueField, locationField}) {
-            field.setMaximumSize(fieldSize);
+        	categoryBox.setAlignmentX(Component.CENTER_ALIGNMENT);
+        	issueField.setAlignmentX(Component.CENTER_ALIGNMENT);
+        	locationField.setAlignmentX(Component.CENTER_ALIGNMENT);
+        	field.setMaximumSize(new Dimension(320, 45));
+        	field.setFont(new Font("Segoe UI", Font.PLAIN, 14));
             field.setBackground(new Color(245, 247, 250));
             field.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200)));
         }
@@ -128,15 +146,23 @@ public class MainGUI {
                 return;
             }
 
+            String issue = issueField.getText();
+            String location = locationField.getText();
+
+            if(issue.isEmpty() || location.isEmpty()){
+                JOptionPane.showMessageDialog(null, "Fill all fields ❌");
+                return;
+            }
+
             try {
                 Connection con = DBConnection.getConnection();
 
-                String query = "INSERT INTO complaints(name, issue, location, category, status) VALUES (?, ?, ?,?, 'Pending')";
+                String query = "INSERT INTO complaints(name, issue, location, category, status) VALUES (?, ?, ?, ?, 'Pending')";
                 PreparedStatement ps = con.prepareStatement(query);
 
                 ps.setString(1, Session.userEmail);
-                ps.setString(2, issueField.getText());
-                ps.setString(3, locationField.getText());
+                ps.setString(2, issue);
+                ps.setString(3, location);
                 ps.setString(4, categoryBox.getSelectedItem().toString());
 
                 ps.executeUpdate();
@@ -160,16 +186,22 @@ public class MainGUI {
         });
 
         card.add(title);
+        card.add(Box.createRigidArea(new Dimension(0, 15)));
+
+        card.add(issueLabel);
         card.add(issueField);
         card.add(Box.createRigidArea(new Dimension(0, 10)));
 
+        card.add(locationLabel);
         card.add(locationField);
         card.add(Box.createRigidArea(new Dimension(0, 10)));
 
-        card.add(new JLabel("Category"));
+        card.add(categoryLabel);
         card.add(categoryBox);
         card.add(Box.createRigidArea(new Dimension(0, 20)));
+
         card.add(submitBtn);
+        card.add(Box.createRigidArea(new Dimension(0, 10)));
         card.add(backBtn);
 
         addPanel.add(card);
@@ -177,8 +209,7 @@ public class MainGUI {
         // ================= MY PANEL =================
         JPanel myPanel = ViewComplaints.createPanel(cardLayout, mainPanel);
 
-        // ================= BUTTON ACTIONS =================
-
+        // BUTTON ACTIONS
         reportBtn.addActionListener(e -> {
             if(Session.userEmail == null){
                 JOptionPane.showMessageDialog(null, "Please login first!");
@@ -199,69 +230,31 @@ public class MainGUI {
         });
 
         userLoginBtn.addActionListener(e -> cardLayout.show(mainPanel, "LOGIN"));
-        
+
         authorityLoginBtn.addActionListener(e -> {
             String name = JOptionPane.showInputDialog("Enter Authority Name");
-
             if (name != null && !name.isEmpty()) {
-                new AuthorityDashboard(name);  
-            }
-        });
-
-        adminLoginBtn.addActionListener(e -> {
-
-            String email = JOptionPane.showInputDialog("Enter Admin Email:");
-            String pass = JOptionPane.showInputDialog("Enter Password:");
-
-            if(email != null && pass != null &&
-               email.equals("admin@gmail.com") && pass.equals("admin123")){
-
-                Session.userEmail = email;
-                Session.role = "admin";
-
-                JOptionPane.showMessageDialog(null, "Admin Login Successful ✅");
-
-                new updateStatus(); // 🔥 OPEN ADMIN PANEL
-
-            } else {
-                JOptionPane.showMessageDialog(null, "Invalid Admin Credentials ❌");
+                new AuthorityDashboard(name);
             }
         });
 
         logoutBtn.addActionListener(e -> {
-        	
-
-        	    int confirm = JOptionPane.showConfirmDialog(
-        	            null,
-        	            "Are you sure you want to logout?",
-        	            "Confirm Logout",
-        	            JOptionPane.YES_NO_OPTION
-        	    );
-
-        	    if (confirm == JOptionPane.YES_OPTION) {
-        	        Session.userEmail = null;
-        	        Session.role = null;
-
-        	        refreshDashboard();
-        	    }
-        	
+            Session.userEmail = null;
+            refreshDashboard();
         });
 
-        // ================= ADD PANELS =================
+        // ADD PANELS
         mainPanel.add(homePanel, "HOME");
         mainPanel.add(addPanel, "ADD");
         mainPanel.add(myPanel, "MY");
         mainPanel.add(LoginPage.createPanel(cardLayout, mainPanel), "LOGIN");
-        mainPanel.add(signupPage.createPanel(cardLayout, mainPanel), "SIGNUP");
 
         frame.add(mainPanel);
         frame.setVisible(true);
 
-        // INITIAL STATE
         refreshDashboard();
     }
 
-    // 🔥 DASHBOARD REFRESH METHOD
     public static void refreshDashboard() {
 
         if(Session.userEmail == null){
@@ -281,12 +274,6 @@ public class MainGUI {
 
             userLoginBtn.setVisible(false);
             adminLoginBtn.setVisible(false);
-        }
-        
-        // ADMIN OVERRIDE (IMPORTANT)
-        if(Session.role != null && Session.role.equals("admin")){
-            reportBtn.setVisible(false);
-            myBtn.setVisible(false);
         }
     }
 }

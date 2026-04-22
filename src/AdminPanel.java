@@ -19,8 +19,8 @@ public class AdminPanel extends JFrame {
         table = new JTable(model);
 
         model.setColumnIdentifiers(new String[]{
-                "ID", "Name", "Issue", "Location", "Status", "Resolved By", "Badge"
-        });
+        	    "ID", "Name", "Issue", "Location", "Category", "Status", "Priority", "Resolved By", "Badge"
+        	});
 
         add(new JScrollPane(table), BorderLayout.CENTER);
         
@@ -28,6 +28,7 @@ public class AdminPanel extends JFrame {
         leaderboard.setEditable(false);
 
         add(new JScrollPane(leaderboard), BorderLayout.EAST);
+        loadLeaderboard(leaderboard);
 
         JButton approveBtn = new JButton("Approve ✅");
         JButton rejectBtn = new JButton("Reject ❌");
@@ -65,6 +66,8 @@ public class AdminPanel extends JFrame {
                 JOptionPane.showMessageDialog(this, "Approved Successfully ✅");
 
                 loadData(); // refresh
+                
+                loadLeaderboard(leaderboard);
 
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -95,18 +98,21 @@ public class AdminPanel extends JFrame {
 
             while (rs.next()) {
             	  String name = rs.getString("resolved_by");   
-            	    String badge = getBadge(name);  
+            	    String badge = getBadge(name); 
+            	    String name = rs.getString("resolved_by");
+            	    String badge = getBadge(name);
             	    
-                model.addRow(new Object[]{
-                		  rs.getInt("id"),
-                	        rs.getString("name"),
-                	        rs.getString("issue"),
-                	        rs.getString("location"),
-                	        rs.getString("status"),
-                	        name,
-                	        badge 
-                        
-                });
+            	    model.addRow(new Object[]{
+            	    	    rs.getInt("id"),
+            	    	    rs.getString("name"),
+            	    	    rs.getString("issue"),
+            	    	    rs.getString("location"),
+            	    	    rs.getString("category"),
+            	    	    rs.getString("status"),
+            	    	    rs.getString("priority"),
+            	    	    rs.getString("resolved_by"),
+            	    	    badge
+            	    	});
             }
 
         } catch (Exception e) {
@@ -195,6 +201,60 @@ public class AdminPanel extends JFrame {
                 sb.append(name + " - " + count + " resolved\n");
 
                 rank++;
+            }
+
+            leaderboard.setText(sb.toString());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    String getBadge(String name) {
+        try {
+            Connection con = DBConnection.getConnection();
+
+            String query = "SELECT COUNT(*) FROM complaints WHERE resolved_by=? AND status='Resolved'";
+            PreparedStatement ps = con.prepareStatement(query);
+            ps.setString(1, name);
+
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                int count = rs.getInt(1);
+
+                if (count >= 10) return "🏆 Gold";
+                else if (count >= 5) return "🥈 Silver";
+                else return "🥉 Bronze";
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return "-";
+    }
+    
+    void loadLeaderboard(JTextArea leaderboard) {
+        try {
+            Connection con = DBConnection.getConnection();
+
+            String query = "SELECT resolved_by, COUNT(*) as total " +
+                           "FROM complaints WHERE status='Resolved' " +
+                           "GROUP BY resolved_by ORDER BY total DESC";
+
+            PreparedStatement ps = con.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();
+
+            StringBuilder sb = new StringBuilder("🏆 Leaderboard\n\n");
+
+            int rank = 1;
+            while (rs.next()) {
+                sb.append(rank++)
+                  .append(". ")
+                  .append(rs.getString("resolved_by"))
+                  .append(" - ")
+                  .append(rs.getInt("total"))
+                  .append(" issues\n");
             }
 
             leaderboard.setText(sb.toString());

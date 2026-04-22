@@ -83,7 +83,7 @@ public class AuthorityPanel extends JFrame {
 
         String name = JOptionPane.showInputDialog("Enter your name:");
 
-        new AuthorityDashboard(name);
+      
         if (name == null || name.isEmpty()) return;
 
         try {

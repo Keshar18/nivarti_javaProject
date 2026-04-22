@@ -200,7 +200,13 @@ public class MainGUI {
 
         userLoginBtn.addActionListener(e -> cardLayout.show(mainPanel, "LOGIN"));
         
-        authorityLoginBtn.addActionListener(e -> new AuthorityPanel());
+        authorityLoginBtn.addActionListener(e -> {
+            String name = JOptionPane.showInputDialog("Enter Authority Name");
+
+            if (name != null && !name.isEmpty()) {
+                new AuthorityDashboard(name);  
+            }
+        });
 
         adminLoginBtn.addActionListener(e -> {
 

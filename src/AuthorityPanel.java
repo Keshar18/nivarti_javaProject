@@ -1,111 +1,171 @@
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.sql.*;
 
-
-
 public class AuthorityPanel extends JFrame {
-	
 
-    JTable table;
-    DefaultTableModel model;
+    JPanel panel;
 
     public AuthorityPanel() {
 
-    	System.out.println("🚀 Authority Panel opened");
-    	
+        System.out.println("🚀 Authority Panel opened");
+
         setTitle("Authority Panel");
-        setSize(900, 500);
+        setSize(1000, 600);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
-        // TABLE
-        String[] columns = {"ID", "Name", "Issue", "Location", "Category", "Status"};
-        model = new DefaultTableModel(columns, 0);
-        table = new JTable(model);
+        // ===== TOP FILTER BAR =====
+        JTextField searchField = new JTextField(15);
 
-        JScrollPane scroll = new JScrollPane(table);
-        add(scroll, BorderLayout.CENTER);
+        JButton allBtn = new JButton("All");
+        JButton pendingBtn = new JButton("Pending");
+        JButton inProgressBtn = new JButton("In Progress");
+        JButton resolvedBtn = new JButton("Resolved");
+        
+        allBtn.addActionListener(e -> loadData("All"));
+        pendingBtn.addActionListener(e -> loadData("Pending"));
+        progressBtn.addActionListener(e -> loadData("In Progress"));
+        resolvedBtn.addActionListener(e -> loadData("Resolved"));
 
-        // BUTTON
-        JButton resolveBtn = new JButton("Mark as Resolved");
-        add(resolveBtn, BorderLayout.SOUTH);
+        JPanel topPanel = new JPanel();
+        topPanel.add(new JLabel("Search:"));
+        topPanel.add(searchField);
+        topPanel.add(allBtn);
+        topPanel.add(pendingBtn);
+        topPanel.add(inProgressBtn);
+        topPanel.add(resolvedBtn);
 
-        // LOAD DATA
-        loadData();
+        add(topPanel, BorderLayout.NORTH);
 
-        // BUTTON ACTION
-        resolveBtn.addActionListener(e -> updateStatus());
+        // ===== CARD PANEL =====
+        panel = new JPanel();
+        panel.setLayout(new GridLayout(0, 3, 10, 10));
+
+        add(new JScrollPane(panel), BorderLayout.CENTER);
+
+        // ===== BUTTON ACTIONS =====
+        allBtn.addActionListener(e -> loadData("All"));
+        pendingBtn.addActionListener(e -> loadData("Pending"));
+        inProgressBtn.addActionListener(e -> loadData("In Progress"));
+        resolvedBtn.addActionListener(e -> loadData("Resolved"));
+
+        // ===== INITIAL LOAD =====
+        loadData("All");
 
         setVisible(true);
     }
 
-    // 🔹 LOAD ONLY PENDING COMPLAINTS
-    void loadData() {
+    // ===== LOAD DATA WITH FILTER =====
+    void loadData(String statusFilter) {
         try {
             Connection con = DBConnection.getConnection();
 
-            if (con == null) {
-                System.out.println("DB NOT CONNECTED ❌");
-                return;
+            String query;
+            if (statusFilter.equals("All")) {
+                query = "SELECT * FROM complaints";
+            } else {
+                query = "SELECT * FROM complaints WHERE status=?";
             }
-
-            String query = "SELECT * FROM complaints WHERE status='Pending'";
 
             PreparedStatement ps = con.prepareStatement(query);
+
+            if (!statusFilter.equals("All")) {
+                ps.setString(1, statusFilter + "%"  );
+            }
+
             ResultSet rs = ps.executeQuery();
 
-            model.setRowCount(0);
+            panel.removeAll();
 
             while (rs.next()) {
-                model.addRow(new Object[]{
-                        rs.getInt("id"),
-                        rs.getString("name"),
-                        rs.getString("issue"),
-                        rs.getString("location"),
-                        rs.getString("category"),
-                        rs.getString("status")
-                });
+                int id = rs.getInt("id");
+                String issue = rs.getString("issue");
+                String location = rs.getString("location");
+                String status = rs.getString("status");
+                String category = rs.getString("category");
+                
+                String resolvedBy = rs.getString("resolved_by");
+
+                panel.add(createCard(id, issue, location, status, category, resolvedBy));
             }
+
+            panel.revalidate();
+            panel.repaint();
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    // 🔹 UPDATE STATUS TO "Resolved (Pending)"
-    void updateStatus() {
+    // ===== CARD UI =====
+    JPanel createCard(int id, String issue, String location, String status, String category, String resolvedBy) {
 
-        int row = table.getSelectedRow();
+        JPanel card = new JPanel();
+        card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
+        card.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+        card.setBackground(Color.WHITE);
 
-        if (row == -1) {
-            JOptionPane.showMessageDialog(this, "Select a row first!");
-            return;
+        JLabel issueLabel = new JLabel("<html><b>" + issue + "</b></html>");
+        JLabel locationLabel = new JLabel("📍 " + location);
+
+        JLabel statusLabel = new JLabel(status);
+        statusLabel.setOpaque(true);
+
+        
+        
+        if (status.equalsIgnoreCase("Pending")) {
+            statusLabel.setBackground(Color.ORANGE);
+        } else if (status.equalsIgnoreCase("Resolved")) {
+            statusLabel.setBackground(Color.GREEN);
+        } else {
+            statusLabel.setBackground(Color.CYAN);
         }
 
-        int id = (int) model.getValueAt(row, 0);
+        JLabel categoryLabel = new JLabel("Category: " + category);
+        
+        JLabel resolvedLabel = new JLabel(
+        	    resolvedBy == null ? "Not assigned" : "Resolved by: " + resolvedBy
+        	);
 
-        String name = JOptionPane.showInputDialog("Enter your name:");
+        	
 
-      
-        if (name == null || name.isEmpty()) return;
+        JButton resolveBtn = new JButton("Resolve");
 
+        resolveBtn.addActionListener(e -> updateStatus(id));
+
+        card.add(issueLabel);
+        card.add(locationLabel);
+        card.add(statusLabel);
+        
+        card.add(categoryLabel);
+        card.add(resolvedLabel);
+        card.add(resolveBtn);
+
+        return card;
+    }
+
+    // ===== UPDATE STATUS =====
+    void updateStatus(int id) {
         try {
+            String name = JOptionPane.showInputDialog(this, "Enter your name:");
+
+            if (name == null || name.isEmpty()) return;
+
             Connection con = DBConnection.getConnection();
 
             String query = "UPDATE complaints SET status=?, resolved_by=? WHERE id=?";
             PreparedStatement ps = con.prepareStatement(query);
 
-            ps.setString(1, "Resolved (Pending)");
+            ps.setString(1, "Resolved");
             ps.setString(2, name);
             ps.setInt(3, id);
 
             ps.executeUpdate();
 
-            JOptionPane.showMessageDialog(this, "Marked as Resolved (Pending) ✅");
+            JOptionPane.showMessageDialog(this, "Marked as Resolved ✅");
 
-            loadData();
+            loadData("All");
 
         } catch (Exception e) {
             e.printStackTrace();

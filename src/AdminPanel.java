@@ -115,7 +115,7 @@ public class AdminPanel extends JFrame {
             try {
                 Connection con = DBConnection.getConnection();
 
-                String query = "UPDATE complaints SET status='Resolved' WHERE id=?";
+                String query = "UPDATE complaints SET status='Resolved', resolved_by=? WHERE id=?";
                 PreparedStatement ps = con.prepareStatement(query);
                 ps.setInt(1, id);
 
@@ -187,9 +187,12 @@ public class AdminPanel extends JFrame {
 
             String query = "UPDATE complaints SET status=? WHERE id=?";
             PreparedStatement ps = con.prepareStatement(query);
+            
+            ps.setString(1, newStatus);   // status
+            ps.setString(2, "Admin");     // resolved_by
+            ps.setInt(3, id);  
 
-            ps.setString(1, newStatus);
-            ps.setInt(2, id);
+           
 
             ps.executeUpdate();
 

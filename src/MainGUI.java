@@ -70,14 +70,7 @@ public class MainGUI {
 
      
 
-        JPanel loginPanel = new JPanel();
-        loginPanel.setOpaque(false);
-        loginPanel.add(userLoginBtn);
-        loginPanel.add(Box.createRigidArea(new Dimension(20, 0)));
-        loginPanel.add(adminLoginBtn);
-
-        loginPanel.add(Box.createRigidArea(new Dimension(20, 0)));
-        homePanel.add(Box.createRigidArea(new Dimension(0, 15)));
+   
 
         JPanel loginPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         loginPanel.setOpaque(false);
@@ -235,8 +228,44 @@ public class MainGUI {
             cardLayout.show(mainPanel, "MY");
         });
 
-        userLoginBtn.addActionListener(e -> cardLayout.show(mainPanel, "LOGIN"));
+        userLoginBtn.addActionListener(e -> {
+            cardLayout.show(mainPanel, "LOGIN");
+        });
 
+        adminLoginBtn.addActionListener(e -> {
+
+            JTextField emailField = new JTextField();
+            JPasswordField passField = new JPasswordField();
+
+            Object[] fields = {
+                "Email:", emailField,
+                "Password:", passField
+            };
+
+            int option = JOptionPane.showConfirmDialog(
+                    null, fields, "Admin Login", JOptionPane.OK_CANCEL_OPTION);
+
+            if (option == JOptionPane.OK_OPTION) {
+
+                String email = emailField.getText();
+                String pass = new String(passField.getPassword());
+
+                if (email.equals("admin@gmail.com") && pass.equals("admin123")) {
+
+                    Session.userEmail = "Admin";
+                    Session.role = "admin";
+
+                    JOptionPane.showMessageDialog(null, "Admin Login Successful ✅");
+
+                    new AdminPanel(); // 🔥 OPEN ADMIN PANEL
+
+                } else {
+                    JOptionPane.showMessageDialog(null, "Invalid Admin Credentials ❌");
+                }
+            }
+        });
+        
+        
         authorityLoginBtn.addActionListener(e -> {
             String name = JOptionPane.showInputDialog("Enter Authority Name");
             if (name != null && !name.isEmpty()) {

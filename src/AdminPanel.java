@@ -2,6 +2,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.sql.*;
+import javax.swing.table.DefaultTableCellRenderer;
 
 public class AdminPanel extends JFrame {
 
@@ -9,6 +10,7 @@ public class AdminPanel extends JFrame {
     DefaultTableModel model;
 
     public AdminPanel() {
+    	getContentPane().setBackground(new Color(245, 247, 250));
 
         setTitle("Admin Approval Panel");
         setSize(900, 500);
@@ -17,19 +19,69 @@ public class AdminPanel extends JFrame {
 
         model = new DefaultTableModel();
         table = new JTable(model);
+        
+        table.setRowHeight(28);
+        table.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+
+        table.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
+        table.getTableHeader().setBackground(new Color(58, 123, 213));
+        table.getTableHeader().setForeground(Color.WHITE);
+
+        table.setSelectionBackground(new Color(220, 235, 252));
+        table.setGridColor(new Color(230, 230, 230));
+        
 
         model.setColumnIdentifiers(new String[]{
                 "ID", "Name", "Issue", "Location", "Category", "Status", "Priority", "Resolved By", "Badge"
         });
 
         add(new JScrollPane(table), BorderLayout.CENTER);
+        table.getColumnModel().getColumn(5).setCellRenderer(new DefaultTableCellRenderer() {
+
+            public Component getTableCellRendererComponent(JTable table, Object value,
+                                                           boolean isSelected, boolean hasFocus,
+                                                           int row, int column) {
+
+                JLabel c = (JLabel) super.getTableCellRendererComponent(
+                        table, value, isSelected, hasFocus, row, column);
+
+                if (value != null) {
+                    String status = value.toString();
+
+                    if (status.equalsIgnoreCase("Pending")) {
+                        c.setBackground(new Color(255, 193, 7));
+                        c.setForeground(Color.BLACK);
+                    } else if (status.equalsIgnoreCase("In Progress")) {
+                        c.setBackground(new Color(33, 150, 243));
+                        c.setForeground(Color.WHITE);
+                    } else {
+                        c.setBackground(new Color(76, 175, 80));
+                        c.setForeground(Color.WHITE);
+                    }
+                }
+
+                return c;
+            }
+        });
+        
 
         JTextArea leaderboard = new JTextArea(10, 20);
+        leaderboard.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        leaderboard.setBackground(new Color(250, 250, 250));
+        leaderboard.setBorder(BorderFactory.createTitledBorder("🏆 Top Authorities"));
         leaderboard.setEditable(false);
-        add(new JScrollPane(leaderboard), BorderLayout.EAST);
+//        add(new JScrollPane(leaderboard), BorderLayout.EAST);
 
         JButton approveBtn = new JButton("Approve ✅");
         JButton rejectBtn = new JButton("Reject ❌");
+        
+        approveBtn.setBackground(new Color(40, 167, 69));
+        approveBtn.setForeground(Color.WHITE);
+        approveBtn.setFocusPainted(false);
+
+        rejectBtn.setBackground(new Color(220, 53, 69));
+        rejectBtn.setForeground(Color.WHITE);
+        rejectBtn.setFocusPainted(false);
 
         JPanel panel = new JPanel();
         panel.add(approveBtn);
@@ -79,12 +131,8 @@ public class AdminPanel extends JFrame {
         try {
             Connection con = DBConnection.getConnection();
 
-            String query = "SELECT * FROM complaints WHERE status='Pending' " +
-                    "ORDER BY CASE " +
-                    "WHEN priority='High' THEN 1 " +
-                    "WHEN priority='Medium' THEN 2 " +
-                    "WHEN priority='Low' THEN 3 " +
-                    "ELSE 4 END";
+            String query = "SELECT * FROM complaints ORDER BY id DESC";
+                   
 
             PreparedStatement ps = con.prepareStatement(query);
             ResultSet rs = ps.executeQuery();

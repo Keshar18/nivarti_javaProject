@@ -66,11 +66,21 @@ public class AdminPanel extends JFrame {
         
 
         JTextArea leaderboard = new JTextArea(10, 20);
+        leaderboard.setLineWrap(true);
+        leaderboard.setWrapStyleWord(true);
+        
+        leaderboard.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        leaderboard.setBackground(new Color(250, 250, 250));
+        leaderboard.setBorder(BorderFactory.createTitledBorder("🏆 Leaderboard"));
+        leaderboard.setEditable(false);
         leaderboard.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         leaderboard.setBackground(new Color(250, 250, 250));
         leaderboard.setBorder(BorderFactory.createTitledBorder("🏆 Top Authorities"));
         leaderboard.setEditable(false);
-//        add(new JScrollPane(leaderboard), BorderLayout.EAST);
+        
+        JScrollPane scroll = new JScrollPane(leaderboard);
+        scroll.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        add(scroll, BorderLayout.EAST);
 
         JButton approveBtn = new JButton("Approve ✅");
         JButton rejectBtn = new JButton("Reject ❌");
@@ -232,19 +242,33 @@ public class AdminPanel extends JFrame {
             PreparedStatement ps = con.prepareStatement(query);
             ResultSet rs = ps.executeQuery();
 
-            StringBuilder sb = new StringBuilder("🏆 Leaderboard\n\n");
+            StringBuilder sb = new StringBuilder("🏆 Top Performing Authorities\n\n");
 
             int rank = 1;
             while (rs.next()) {
-                sb.append(rank++)
-                        .append(". ")
-                        .append(rs.getString("resolved_by"))
-                        .append(" - ")
-                        .append(rs.getInt("total"))
-                        .append(" issues\n");
+
+                String name = rs.getString("resolved_by");
+                int total = rs.getInt("total");
+
+                String medal;
+                if (rank == 1) medal = "🥇";
+                else if (rank == 2) medal = "🥈";
+                else if (rank == 3) medal = "🥉";
+                else medal = "•";
+
+                sb.append(medal)
+                  .append("  ")
+                  .append(name)
+                  .append("  (")
+                  .append(total)
+                  .append(" resolved)\n\n");
+
+                rank++;
             }
 
             leaderboard.setText(sb.toString());
+
+            
 
         } catch (Exception e) {
             e.printStackTrace();
